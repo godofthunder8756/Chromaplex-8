@@ -10,7 +10,10 @@
  * ║  "Plug in. Power up. Play."                                  ║
  * ╚══════════════════════════════════════════════════════════════╝
  *
- * main.c — SDL2 entry point, boot screen, main game loop.
+ * main.c — SDL2 entry point, state machine, boot/home/game/editor.
+ *
+ * States:  BOOT → HOME ⇄ RUNNING
+ *                      ⇄ EDITOR  (Ctrl+R from editor → RUNNING)
  */
 
 #include <SDL.h>
@@ -28,6 +31,18 @@
 #include "cx8_modules.h"
 #include "cx8_scripting.h"
 #include "cx8_font.h"
+#include "cx8_home.h"
+#include "cx8_editor.h"
+
+/* ─── Application states ───────────────────────────────────── */
+
+typedef enum {
+    STATE_BOOT,
+    STATE_HOME,
+    STATE_RUNNING,
+    STATE_EDITOR,
+    STATE_QUIT
+} app_state_t;
 
 /* ─── Globals ──────────────────────────────────────────────── */
 static SDL_Window   *g_window   = NULL;
@@ -35,8 +50,19 @@ static SDL_Renderer *g_renderer = NULL;
 static SDL_Texture  *g_texture  = NULL;
 static SDL_AudioDeviceID g_audio_dev = 0;
 static uint32_t      g_pixels[CX8_SCREEN_W * CX8_SCREEN_H];
-static bool          g_running  = true;
+static app_state_t   g_state    = STATE_BOOT;
 static int           g_scale    = CX8_WINDOW_SCALE;
+
+/* Cart directory — defaults to ./carts or sibling carts\ */
+static char g_carts_dir[512] = "carts";
+
+/* Currently loaded cart + Lua VM for running state */
+static cx8_cart_t   g_cart;
+static bool         g_cart_loaded = false;
+static lua_State   *g_lua = NULL;
+
+/* Boot screen frame counter */
+static int g_boot_frame = 0;
 
 /* ─── SDL Initialization ──────────────────────────────────── */
 
@@ -123,16 +149,15 @@ static void present_frame(void)
 
     SDL_UpdateTexture(g_texture, NULL, g_pixels, CX8_SCREEN_W * sizeof(uint32_t));
 
-    /* Optional CRT scanline effect */
     SDL_SetRenderDrawColor(g_renderer, 0, 0, 0, 255);
     SDL_RenderClear(g_renderer);
     SDL_RenderCopy(g_renderer, g_texture, NULL, NULL);
     SDL_RenderPresent(g_renderer);
 }
 
-/* ─── Input mapping ────────────────────────────────────────── */
+/* ─── Input mapping (game mode) ────────────────────────────── */
 
-static void handle_key(SDL_Keycode key, bool pressed)
+static void handle_game_key(SDL_Keycode key, bool pressed)
 {
     switch (key) {
     case SDLK_LEFT:   cx8_input_set(CX8_BTN_LEFT,  pressed); break;
@@ -147,9 +172,68 @@ static void handle_key(SDL_Keycode key, bool pressed)
     case SDLK_s:      cx8_input_set(CX8_BTN_X,     pressed); break;
     case SDLK_d:
     case SDLK_f:      cx8_input_set(CX8_BTN_Y,     pressed); break;
-    case SDLK_ESCAPE: g_running = false; break;
     default: break;
     }
+}
+
+/* ─── Cart loading helper ──────────────────────────────────── */
+
+static bool load_and_run_cart(const char *path)
+{
+    /* Clean up any previous cart */
+    if (g_lua) { cx8_script_shutdown(g_lua); g_lua = NULL; }
+    if (g_cart_loaded) { cx8_cart_free(&g_cart); g_cart_loaded = false; }
+
+    /* Reset GPU state */
+    cx8_gpu_cls(0);
+    cx8_gpu_camera(0, 0, 1.0f);
+    cx8_gpu_clip_reset();
+    cx8_gpu_pal_reset();
+    cx8_apu_stop_all();
+
+    /* Load cart */
+    if (!cx8_cart_load(path, &g_cart)) {
+        fprintf(stderr, "[CX8] Failed to load cartridge: %s\n", path);
+        return false;
+    }
+    g_cart_loaded = true;
+
+    /* Load sprite data into GPU */
+    if (g_cart.sprite_data && g_cart.sprite_len > 0) {
+        uint8_t *sheet = cx8_gpu_get_spritesheet();
+        size_t copy_len = g_cart.sprite_len;
+        if (copy_len > CX8_SPRITESHEET_W * CX8_SPRITESHEET_H)
+            copy_len = CX8_SPRITESHEET_W * CX8_SPRITESHEET_H;
+        memcpy(sheet, g_cart.sprite_data, copy_len);
+    }
+
+    /* Load map data into GPU */
+    if (g_cart.map_data && g_cart.map_len > 0) {
+        uint8_t *mapdata = cx8_gpu_get_mapdata();
+        size_t copy_len = g_cart.map_len;
+        if (copy_len > CX8_MAP_W * CX8_MAP_H)
+            copy_len = CX8_MAP_W * CX8_MAP_H;
+        memcpy(mapdata, g_cart.map_data, copy_len);
+    }
+
+    /* Init Lua */
+    g_lua = cx8_script_init();
+    if (!g_lua) {
+        fprintf(stderr, "[CX8] Failed to initialise scripting engine.\n");
+        return false;
+    }
+
+    if (!cx8_script_load(g_lua, g_cart.source,
+                         g_cart.title[0] ? g_cart.title : g_cart.filename)) {
+        fprintf(stderr, "[CX8] Failed to load cart script.\n");
+        cx8_script_shutdown(g_lua);
+        g_lua = NULL;
+        return false;
+    }
+
+    cx8_script_call_init(g_lua);
+    printf("[CX8] Running cartridge: %s\n", path);
+    return true;
 }
 
 /* ─── Boot screen ──────────────────────────────────────────── */
@@ -158,32 +242,27 @@ static void boot_frame(int frame)
 {
     cx8_gpu_cls(0);
 
-    int phase = frame / 10;  /* each animation phase is ~166ms */
+    int phase = frame / 10;
 
     if (phase >= 0) {
-        /* Background gradient strip */
         for (int x = 0; x < CX8_SCREEN_W; x++) {
-            uint8_t c = (uint8_t)(40 + (x % 8));  /* subtle blue gradient */
+            uint8_t c = (uint8_t)(40 + (x % 8));
             cx8_gpu_pset(x, 52, c);
             cx8_gpu_pset(x, 88, c);
         }
     }
 
     if (phase >= 1) {
-        /* "CHROMAPLEX" title — big and centered */
         const char *title = "CHROMAPLEX";
-        int tw = (int)strlen(title) * 10; /* large text: 2x scale */
+        int tw = (int)strlen(title) * 10;
         int tx = (CX8_SCREEN_W - tw) / 2;
-        /* Draw each character 2x scaled */
         for (int i = 0; title[i]; i++) {
-            /* Use the font system but draw 2x manually */
             const uint8_t *glyph = cx8_font_glyph(title[i]);
             for (int row = 0; row < 6; row++) {
                 for (int col = 0; col < 4; col++) {
                     if (glyph[row] & (0x8 >> col)) {
                         int px = tx + i * 10 + col * 2;
                         int py = 56 + row * 2;
-                        /* Use a colour cycle based on position */
                         uint8_t c = (uint8_t)(42 + (i % 6));
                         cx8_gpu_pset(px,     py,     c);
                         cx8_gpu_pset(px + 1, py,     c);
@@ -196,7 +275,6 @@ static void boot_frame(int frame)
     }
 
     if (phase >= 2) {
-        /* The "8" — large, in a distinct accent colour */
         int ex = CX8_SCREEN_W / 2 + 52;
         const uint8_t *glyph = cx8_font_glyph('8');
         for (int row = 0; row < 6; row++) {
@@ -204,35 +282,26 @@ static void boot_frame(int frame)
                 if (glyph[row] & (0x8 >> col)) {
                     int px = ex + col * 3;
                     int py = 54 + row * 3;
-                    /* Bright neon accent */
                     for (int dy = 0; dy < 3; dy++)
                         for (int dx = 0; dx < 3; dx++)
-                            cx8_gpu_pset(px + dx, py + dy, 61); /* neon cyan */
+                            cx8_gpu_pset(px + dx, py + dy, 61);
                 }
             }
         }
     }
 
-    if (phase >= 3) {
-        /* System specs line */
-        cx8_gpu_print("CPU: CX8-A /// GPU: PRISM-64 /// APU: WAVE-4",
-                      16, 96, 5);
-    }
+    if (phase >= 3)
+        cx8_gpu_print("CPU: CX8-A /// GPU: PRISM-64 /// APU: WAVE-4", 16, 96, 5);
 
-    if (phase >= 4) {
-        /* Hardware info */
-        cx8_gpu_print("256x144 WIDESCREEN  64 COLOURS  128KB RAM",
-                      20, 106, 4);
-    }
+    if (phase >= 4)
+        cx8_gpu_print("256x144 WIDESCREEN  64 COLOURS  128KB RAM", 20, 106, 4);
 
     if (phase >= 5) {
-        /* Module bay status */
         int loaded = cx8_module_count_loaded();
         char buf[128];
         snprintf(buf, sizeof(buf), "MODULES: %d LOADED", loaded);
         cx8_gpu_print(buf, 16, 120, 3);
 
-        /* List loaded modules */
         if (loaded > 0) {
             const cx8_module_t *mods[CX8_MOD_MAX];
             int n = cx8_module_list(mods, CX8_MOD_MAX);
@@ -247,12 +316,10 @@ static void boot_frame(int frame)
     }
 
     if (phase >= 7) {
-        /* Ready prompt (blinking) */
         if ((frame / 15) % 2 == 0)
             cx8_gpu_print("READY.", 16, 134, 7);
     }
 
-    /* Decorative border lines */
     for (int x = 0; x < CX8_SCREEN_W; x++) {
         cx8_gpu_pset(x, 0, 1);
         cx8_gpu_pset(x, CX8_SCREEN_H - 1, 1);
@@ -261,75 +328,6 @@ static void boot_frame(int frame)
         cx8_gpu_pset(0, y, 1);
         cx8_gpu_pset(CX8_SCREEN_W - 1, y, 1);
     }
-}
-
-static void run_boot_screen(void)
-{
-    int boot_frames = 120;  /* 2 seconds at 60fps */
-
-    for (int frame = 0; frame < boot_frames && g_running; frame++) {
-        SDL_Event e;
-        while (SDL_PollEvent(&e)) {
-            if (e.type == SDL_QUIT) { g_running = false; return; }
-            if (e.type == SDL_KEYDOWN) {
-                if (e.key.keysym.sym == SDLK_ESCAPE) { g_running = false; return; }
-                if (e.key.keysym.sym == SDLK_RETURN || e.key.keysym.sym == SDLK_SPACE)
-                    return; /* skip boot */
-            }
-        }
-
-        boot_frame(frame);
-        present_frame();
-        SDL_Delay(1000 / CX8_FPS);
-    }
-}
-
-/* ─── Main game loop ──────────────────────────────────────── */
-
-static void run_game_loop(lua_State *L)
-{
-    Uint32 frame_time = 1000 / CX8_FPS;
-    Uint32 last_time  = SDL_GetTicks();
-
-    cx8_script_call_init(L);
-
-    while (g_running) {
-        Uint32 now = SDL_GetTicks();
-
-        /* ── Events ─────────────────────────────────────── */
-        SDL_Event e;
-        cx8_input_begin_frame();
-        while (SDL_PollEvent(&e)) {
-            switch (e.type) {
-            case SDL_QUIT:
-                g_running = false;
-                break;
-            case SDL_KEYDOWN:
-                handle_key(e.key.keysym.sym, true);
-                break;
-            case SDL_KEYUP:
-                handle_key(e.key.keysym.sym, false);
-                break;
-            }
-        }
-
-        if (!g_running) break;
-
-        /* ── Update ─────────────────────────────────────── */
-        cx8_script_call_update(L);
-
-        /* ── Draw ───────────────────────────────────────── */
-        cx8_script_call_draw(L);
-        present_frame();
-
-        /* ── Frame pacing ───────────────────────────────── */
-        Uint32 elapsed = SDL_GetTicks() - now;
-        if (elapsed < frame_time)
-            SDL_Delay(frame_time - elapsed);
-
-        last_time = now;
-    }
-    (void)last_time;
 }
 
 /* ─── Usage ────────────────────────────────────────────────── */
@@ -351,19 +349,31 @@ static void print_banner(void)
 
 static void print_usage(const char *prog)
 {
-    printf("Usage: %s [options] <cartridge.lua>\n\n", prog);
+    printf("Usage: %s [options] [cartridge.lua]\n\n", prog);
+    printf("If no cartridge is given, the home screen is shown.\n\n");
     printf("Options:\n");
     printf("  --scale N      Window scale (default: %d)\n", CX8_WINDOW_SCALE);
+    printf("  --carts DIR    Cartridge folder (default: carts)\n");
     printf("  --mod ID       Load expansion module (0-4)\n");
     printf("  --help         Show this message\n\n");
-    printf("Controls:\n");
+    printf("Controls (Game):\n");
     printf("  Arrow keys     D-Pad (Left/Right/Up/Down)\n");
     printf("  Z / C          Button A\n");
     printf("  X / V          Button B\n");
     printf("  A / S          Button X\n");
     printf("  D / F          Button Y\n");
-    printf("  Escape         Quit\n");
-    printf("  Enter/Space    Skip boot screen\n\n");
+    printf("  Escape         Return to home screen\n\n");
+    printf("Controls (Home):\n");
+    printf("  Up/Down        Browse cartridges\n");
+    printf("  Z              Run selected cart\n");
+    printf("  X              Edit selected cart\n");
+    printf("  A              Create new cart\n");
+    printf("  Escape         Quit\n\n");
+    printf("Controls (Editor):\n");
+    printf("  F1-F4          Switch tab (Code/Sprite/Map/SFX)\n");
+    printf("  Ctrl+S         Save cartridge\n");
+    printf("  Ctrl+R         Run cartridge\n");
+    printf("  Escape         Return to home screen\n\n");
     printf("Expansion Modules:\n");
     printf("  0  TURBO-RAM 8X      (NovaByte Industries)   +128KB RAM\n");
     printf("  1  SYNTHWAVE-16      (AudioLux Labs)         +12 channels\n");
@@ -393,6 +403,9 @@ int main(int argc, char *argv[])
             if (g_scale < 1) g_scale = 1;
             if (g_scale > 8) g_scale = 8;
         }
+        else if (strcmp(argv[i], "--carts") == 0 && i + 1 < argc) {
+            strncpy(g_carts_dir, argv[++i], sizeof(g_carts_dir) - 1);
+        }
         else if (strcmp(argv[i], "--mod") == 0 && i + 1 < argc) {
             int mod_id = atoi(argv[++i]);
             if (mod_id >= 0 && mod_id < CX8_MOD_MAX && mod_count < CX8_MOD_MAX)
@@ -401,12 +414,6 @@ int main(int argc, char *argv[])
         else if (argv[i][0] != '-') {
             cart_path = argv[i];
         }
-    }
-
-    if (!cart_path) {
-        fprintf(stderr, "Error: no cartridge specified.\n\n");
-        print_usage(argv[0]);
-        return 1;
     }
 
     /* ── Initialise subsystems ──────────────────────────── */
@@ -427,69 +434,298 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    /* ── Boot screen ────────────────────────────────────── */
-    run_boot_screen();
-
-    if (!g_running) {
-        shutdown_sdl();
-        cx8_mem_free();
-        return 0;
+    /* ── If a cart was given on the command line, go straight to running ── */
+    if (cart_path) {
+        g_state = STATE_BOOT;
+    } else {
+        g_state = STATE_BOOT;
     }
+    g_boot_frame = 0;
 
-    /* ── Load cartridge ─────────────────────────────────── */
-    cx8_cart_t cart;
-    if (!cx8_cart_load(cart_path, &cart)) {
-        fprintf(stderr, "Failed to load cartridge: %s\n", cart_path);
-        shutdown_sdl();
-        cx8_mem_free();
-        return 1;
+    /* ── Event buffer for editor mode ───────────────────── */
+    #define MAX_FRAME_EVENTS 64
+    SDL_Event frame_events[MAX_FRAME_EVENTS];
+    int frame_event_count = 0;
+
+    /* ── Main loop (state machine) ──────────────────────── */
+    Uint32 frame_time = 1000 / CX8_FPS;
+
+    while (g_state != STATE_QUIT) {
+        Uint32 now = SDL_GetTicks();
+
+        /* ── Collect events ─────────────────────────────── */
+        SDL_Event e;
+        cx8_input_begin_frame();
+        frame_event_count = 0;
+
+        while (SDL_PollEvent(&e)) {
+            if (e.type == SDL_QUIT) {
+                g_state = STATE_QUIT;
+                break;
+            }
+
+            /* Store event for editor */
+            if (frame_event_count < MAX_FRAME_EVENTS)
+                frame_events[frame_event_count++] = e;
+
+            /* Map keys to input system (for HOME and RUNNING) */
+            if (e.type == SDL_KEYDOWN)
+                handle_game_key(e.key.keysym.sym, true);
+            else if (e.type == SDL_KEYUP)
+                handle_game_key(e.key.keysym.sym, false);
+        }
+
+        if (g_state == STATE_QUIT) break;
+
+        /* ── State tick ─────────────────────────────────── */
+        switch (g_state) {
+
+        /* ═══ BOOT ═══════════════════════════════════════ */
+        case STATE_BOOT:
+            /* Check for skip */
+            for (int i = 0; i < frame_event_count; i++) {
+                if (frame_events[i].type == SDL_KEYDOWN) {
+                    SDL_Keycode k = frame_events[i].key.keysym.sym;
+                    if (k == SDLK_RETURN || k == SDLK_SPACE) {
+                        g_boot_frame = 999; /* skip */
+                    }
+                    if (k == SDLK_ESCAPE) {
+                        g_state = STATE_QUIT;
+                    }
+                }
+            }
+
+            boot_frame(g_boot_frame);
+            present_frame();
+            g_boot_frame++;
+
+            if (g_boot_frame >= 120) {
+                /* Boot done — either run CLI cart or go home */
+                if (cart_path) {
+                    if (load_and_run_cart(cart_path)) {
+                        g_state = STATE_RUNNING;
+                    } else {
+                        /* Fall back to home screen on load failure */
+                        cx8_home_init(g_carts_dir);
+                        g_state = STATE_HOME;
+                    }
+                } else {
+                    cx8_home_init(g_carts_dir);
+                    g_state = STATE_HOME;
+                }
+            }
+            break;
+
+        /* ═══ HOME ═══════════════════════════════════════ */
+        case STATE_HOME: {
+            /* Check for ESC = quit */
+            for (int i = 0; i < frame_event_count; i++) {
+                if (frame_events[i].type == SDL_KEYDOWN &&
+                    frame_events[i].key.keysym.sym == SDLK_ESCAPE) {
+                    g_state = STATE_QUIT;
+                }
+            }
+            if (g_state == STATE_QUIT) break;
+
+            cx8_home_result_t hr = cx8_home_update();
+
+            switch (hr) {
+            case CX8_HOME_RUN: {
+                const char *path = cx8_home_selected_path();
+                if (path && load_and_run_cart(path)) {
+                    g_state = STATE_RUNNING;
+                    SDL_StopTextInput();
+                }
+                break;
+            }
+            case CX8_HOME_EDIT: {
+                const char *path = cx8_home_selected_path();
+                if (path) {
+                    /* Load cart for editing */
+                    if (g_cart_loaded) { cx8_cart_free(&g_cart); g_cart_loaded = false; }
+                    if (cx8_cart_load(path, &g_cart)) {
+                        g_cart_loaded = true;
+                        /* Load sprite/map data into GPU for editor */
+                        if (g_cart.sprite_data && g_cart.sprite_len > 0) {
+                            uint8_t *sheet = cx8_gpu_get_spritesheet();
+                            size_t copy_len = g_cart.sprite_len;
+                            if (copy_len > CX8_SPRITESHEET_W * CX8_SPRITESHEET_H)
+                                copy_len = CX8_SPRITESHEET_W * CX8_SPRITESHEET_H;
+                            memcpy(sheet, g_cart.sprite_data, copy_len);
+                        }
+                        if (g_cart.map_data && g_cart.map_len > 0) {
+                            uint8_t *mapdata = cx8_gpu_get_mapdata();
+                            size_t copy_len = g_cart.map_len;
+                            if (copy_len > CX8_MAP_W * CX8_MAP_H)
+                                copy_len = CX8_MAP_W * CX8_MAP_H;
+                            memcpy(mapdata, g_cart.map_data, copy_len);
+                        }
+                        cx8_editor_init(&g_cart, path);
+                        SDL_StartTextInput();
+                        g_state = STATE_EDITOR;
+                    }
+                }
+                break;
+            }
+            case CX8_HOME_NEW: {
+                /* Create a blank cart */
+                if (g_cart_loaded) { cx8_cart_free(&g_cart); g_cart_loaded = false; }
+                memset(&g_cart, 0, sizeof(g_cart));
+                strncpy(g_cart.title, "UNTITLED", sizeof(g_cart.title) - 1);
+                strncpy(g_cart.author, "UNKNOWN", sizeof(g_cart.author) - 1);
+                g_cart.source = (char *)calloc(1, 256);
+                if (g_cart.source) {
+                    strcpy(g_cart.source,
+                        "-- title: untitled\n"
+                        "-- author: you\n"
+                        "\n"
+                        "function _init()\n"
+                        "end\n"
+                        "\n"
+                        "function _update()\n"
+                        "end\n"
+                        "\n"
+                        "function _draw()\n"
+                        "  cls(0)\n"
+                        "  print(\"hello world!\", 80, 60, 7)\n"
+                        "end\n");
+                    g_cart.source_len = strlen(g_cart.source);
+                }
+                g_cart.max_size = CX8_CART_SIZE;
+                g_cart_loaded = true;
+
+                /* Build a save path */
+                char new_path[512];
+                snprintf(new_path, sizeof(new_path), "%s/untitled.lua", g_carts_dir);
+                cx8_editor_init(&g_cart, new_path);
+                SDL_StartTextInput();
+                g_state = STATE_EDITOR;
+                break;
+            }
+            case CX8_HOME_QUIT:
+                g_state = STATE_QUIT;
+                break;
+            default:
+                break;
+            }
+
+            if (g_state == STATE_HOME) {
+                cx8_home_draw();
+                present_frame();
+            }
+            break;
+        }
+
+        /* ═══ RUNNING ════════════════════════════════════ */
+        case STATE_RUNNING: {
+            /* Check for ESC → back to home */
+            for (int i = 0; i < frame_event_count; i++) {
+                if (frame_events[i].type == SDL_KEYDOWN &&
+                    frame_events[i].key.keysym.sym == SDLK_ESCAPE) {
+                    /* Stop the game and go home */
+                    printf("[CX8] Returning to home screen.\n");
+                    if (g_lua) { cx8_script_shutdown(g_lua); g_lua = NULL; }
+                    cx8_apu_stop_all();
+                    cx8_home_init(g_carts_dir);
+                    g_state = STATE_HOME;
+                    break;
+                }
+            }
+            if (g_state != STATE_RUNNING) break;
+
+            /* Update & draw */
+            if (g_lua) {
+                cx8_script_call_update(g_lua);
+                cx8_script_call_draw(g_lua);
+            }
+            present_frame();
+            break;
+        }
+
+        /* ═══ EDITOR ═════════════════════════════════════ */
+        case STATE_EDITOR: {
+            cx8_edit_result_t er = cx8_editor_update(frame_events, frame_event_count);
+
+            switch (er) {
+            case CX8_EDIT_EXIT:
+                SDL_StopTextInput();
+                cx8_editor_shutdown();
+                cx8_home_init(g_carts_dir);
+                g_state = STATE_HOME;
+                break;
+            case CX8_EDIT_RUN: {
+                /* Sync editor → cart, then run */
+                cx8_editor_sync_to_cart();
+                SDL_StopTextInput();
+                cx8_editor_shutdown();
+
+                /* Reset GPU state */
+                cx8_gpu_cls(0);
+                cx8_gpu_camera(0, 0, 1.0f);
+                cx8_gpu_clip_reset();
+                cx8_gpu_pal_reset();
+                cx8_apu_stop_all();
+
+                /* Load sprite/map data from cart into GPU */
+                if (g_cart.sprite_data && g_cart.sprite_len > 0) {
+                    uint8_t *sheet = cx8_gpu_get_spritesheet();
+                    size_t copy_len = g_cart.sprite_len;
+                    if (copy_len > CX8_SPRITESHEET_W * CX8_SPRITESHEET_H)
+                        copy_len = CX8_SPRITESHEET_W * CX8_SPRITESHEET_H;
+                    memcpy(sheet, g_cart.sprite_data, copy_len);
+                }
+                if (g_cart.map_data && g_cart.map_len > 0) {
+                    uint8_t *mapdata = cx8_gpu_get_mapdata();
+                    size_t copy_len = g_cart.map_len;
+                    if (copy_len > CX8_MAP_W * CX8_MAP_H)
+                        copy_len = CX8_MAP_W * CX8_MAP_H;
+                    memcpy(mapdata, g_cart.map_data, copy_len);
+                }
+
+                /* Init Lua and run */
+                g_lua = cx8_script_init();
+                if (g_lua && cx8_script_load(g_lua, g_cart.source,
+                        g_cart.title[0] ? g_cart.title : "editor-cart")) {
+                    cx8_script_call_init(g_lua);
+                    printf("[CX8] Running from editor.\n");
+                    g_state = STATE_RUNNING;
+                } else {
+                    /* Script error — go back home */
+                    fprintf(stderr, "[CX8] Script error, returning to home.\n");
+                    if (g_lua) { cx8_script_shutdown(g_lua); g_lua = NULL; }
+                    cx8_home_init(g_carts_dir);
+                    g_state = STATE_HOME;
+                }
+                break;
+            }
+            case CX8_EDIT_SAVE:
+            case CX8_EDIT_NONE:
+            default:
+                break;
+            }
+
+            if (g_state == STATE_EDITOR) {
+                cx8_editor_draw();
+                present_frame();
+            }
+            break;
+        }
+
+        default:
+            break;
+        }
+
+        /* ── Frame pacing ───────────────────────────────── */
+        Uint32 elapsed = SDL_GetTicks() - now;
+        if (elapsed < frame_time)
+            SDL_Delay(frame_time - elapsed);
     }
-
-    /* Load sprite data from cart into GPU */
-    if (cart.sprite_data && cart.sprite_len > 0) {
-        uint8_t *sheet = cx8_gpu_get_spritesheet();
-        size_t copy_len = cart.sprite_len;
-        if (copy_len > CX8_SPRITESHEET_W * CX8_SPRITESHEET_H)
-            copy_len = CX8_SPRITESHEET_W * CX8_SPRITESHEET_H;
-        memcpy(sheet, cart.sprite_data, copy_len);
-    }
-
-    /* Load map data from cart into GPU */
-    if (cart.map_data && cart.map_len > 0) {
-        uint8_t *mapdata = cx8_gpu_get_mapdata();
-        size_t copy_len = cart.map_len;
-        if (copy_len > CX8_MAP_W * CX8_MAP_H)
-            copy_len = CX8_MAP_W * CX8_MAP_H;
-        memcpy(mapdata, cart.map_data, copy_len);
-    }
-
-    /* ── Initialise Lua scripting ───────────────────────── */
-    lua_State *L = cx8_script_init();
-    if (!L) {
-        fprintf(stderr, "Failed to initialise scripting engine.\n");
-        cx8_cart_free(&cart);
-        shutdown_sdl();
-        cx8_mem_free();
-        return 1;
-    }
-
-    if (!cx8_script_load(L, cart.source, cart.title[0] ? cart.title : cart.filename)) {
-        fprintf(stderr, "Failed to load cartridge script.\n");
-        cx8_script_shutdown(L);
-        cx8_cart_free(&cart);
-        shutdown_sdl();
-        cx8_mem_free();
-        return 1;
-    }
-
-    /* ── Main game loop ─────────────────────────────────── */
-    printf("[CX8] Running cartridge...\n");
-    run_game_loop(L);
 
     /* ── Cleanup ────────────────────────────────────────── */
     printf("[CX8] Shutting down...\n");
-    cx8_script_shutdown(L);
-    cx8_cart_free(&cart);
+    SDL_StopTextInput();
+    if (g_lua) { cx8_script_shutdown(g_lua); g_lua = NULL; }
+    if (g_cart_loaded) { cx8_cart_free(&g_cart); g_cart_loaded = false; }
     cx8_apu_shutdown();
     cx8_gpu_shutdown();
     shutdown_sdl();

@@ -122,7 +122,8 @@ Write-Host "  ╠═════════════════════
 Write-Host "  ║  Output: build\chromaplex8.exe            ║" -ForegroundColor Green
 Write-Host "  ║                                           ║" -ForegroundColor Green
 Write-Host "  ║  Run:  cd build                           ║" -ForegroundColor Green
-Write-Host "  ║        chromaplex8.exe carts\hello.lua     ║" -ForegroundColor Green
+Write-Host "  ║        chromaplex8.exe                     ║" -ForegroundColor Green
+Write-Host "  ║    or: chromaplex8.exe carts\hello.lua     ║" -ForegroundColor Green
 Write-Host "  ╚═══════════════════════════════════════════╝" -ForegroundColor Green
 Write-Host ""
 

@@ -87,7 +87,7 @@ echo [BUILD] Compiling Chromaplex 8...
 set CFLAGS=-std=c11 -O2 -Wall -Wno-unused-result
 set INCLUDES=-I"%SDL2_DIR%\include\SDL2" -I"%LUA_DIR%\src" -I"%SRC%"
 set LIBS=-L"%SDL2_DIR%\lib" -L"%LUA_DIR%\src" -lmingw32 -lSDL2main -lSDL2 -llua -lm
-set SOURCES=%SRC%\main.c %SRC%\cx8_memory.c %SRC%\cx8_gpu.c %SRC%\cx8_font.c %SRC%\cx8_input.c %SRC%\cx8_apu.c %SRC%\cx8_cart.c %SRC%\cx8_modules.c %SRC%\cx8_scripting.c
+set SOURCES=%SRC%\main.c %SRC%\cx8_memory.c %SRC%\cx8_gpu.c %SRC%\cx8_font.c %SRC%\cx8_input.c %SRC%\cx8_apu.c %SRC%\cx8_cart.c %SRC%\cx8_modules.c %SRC%\cx8_scripting.c %SRC%\cx8_home.c %SRC%\cx8_editor.c %SRC%\cx8_ed_code.c %SRC%\cx8_ed_sprite.c %SRC%\cx8_ed_map.c %SRC%\cx8_ed_sfx.c
 
 gcc %CFLAGS% %INCLUDES% %SOURCES% %LIBS% -o "%BUILD%\chromaplex8.exe"
 
@@ -107,7 +107,8 @@ echo   ╠═══════════════════════�
 echo   ║  Output: build\chromaplex8.exe            ║
 echo   ║                                           ║
 echo   ║  Run:  cd build                           ║
-echo   ║        chromaplex8.exe carts\hello.lua     ║
+echo   ║        chromaplex8.exe                     ║
+echo   ║    or: chromaplex8.exe carts\hello.lua     ║
 echo   ╚═══════════════════════════════════════════╝
 echo.
 
