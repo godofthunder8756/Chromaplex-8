@@ -2,20 +2,6 @@
 
 **Fantasy Game Console · v1.0**
 
-```
-  ╔═══════════════════════════════════════════╗
-  ║           C H R O M A P L E X   8        ║
-  ║         Fantasy Game Console v1.0         ║
-  ╟───────────────────────────────────────────╢
-  ║  CPU: CX8-A      GPU: PRISM-64           ║
-  ║  APU: WAVE-4     RAM: 128 KB             ║
-  ║  Display: 256×144  Palette: 64 colours   ║
-  ║  Cart: 64 KB  (no token limit)           ║
-  ╚═══════════════════════════════════════════╝
-```
-
-*"Plug in. Power up. Play."*
-
 ![Title Screen](screenshots/titlescreen.png)
 
 ---
