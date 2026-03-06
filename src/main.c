@@ -33,6 +33,8 @@
 #include "cx8_font.h"
 #include "cx8_home.h"
 #include "cx8_editor.h"
+#include "cx8_netlink.h"
+#include "cx8_pixstretch.h"
 
 /* ─── Application states ───────────────────────────────────── */
 
@@ -145,6 +147,11 @@ static void present_frame(void)
         const cx8_color_t *c = &palette[vram[i] & 0x3F];
         g_pixels[i] = (0xFFu << 24) | ((uint32_t)c->r << 16)
                      | ((uint32_t)c->g << 8) | (uint32_t)c->b;
+    }
+
+    /* Apply PIXEL-STRETCH PRO effects (if module loaded) */
+    if (cx8_fx_is_enabled()) {
+        cx8_fx_apply(g_pixels, CX8_SCREEN_W, CX8_SCREEN_H);
     }
 
     SDL_UpdateTexture(g_texture, NULL, g_pixels, CX8_SCREEN_W * sizeof(uint32_t));
@@ -423,6 +430,8 @@ int main(int argc, char *argv[])
     cx8_input_init();
     cx8_cart_init();
     cx8_modules_init();
+    cx8_fx_init();
+    cx8_net_init();
 
     /* Load requested modules */
     for (int i = 0; i < mod_count; i++)
@@ -467,6 +476,9 @@ int main(int argc, char *argv[])
             /* Store event for editor */
             if (frame_event_count < MAX_FRAME_EVENTS)
                 frame_events[frame_event_count++] = e;
+
+            /* Handle controller events */
+            cx8_input_handle_controller_event(&e);
 
             /* Map keys to input system (for HOME and RUNNING) */
             if (e.type == SDL_KEYDOWN)
@@ -638,6 +650,11 @@ int main(int argc, char *argv[])
                 cx8_script_call_update(g_lua);
                 cx8_script_call_draw(g_lua);
             }
+
+            /* Update subsystems */
+            cx8_net_update();
+            cx8_fx_update(1.0f / CX8_FPS);
+
             present_frame();
             break;
         }
@@ -728,6 +745,9 @@ int main(int argc, char *argv[])
     if (g_cart_loaded) { cx8_cart_free(&g_cart); g_cart_loaded = false; }
     cx8_apu_shutdown();
     cx8_gpu_shutdown();
+    cx8_net_shutdown();
+    cx8_fx_shutdown();
+    cx8_input_shutdown();
     shutdown_sdl();
     cx8_mem_free();
 

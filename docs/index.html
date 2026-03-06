@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chromaplex 8 — Documentation</title>
+<style>
+  :root {
+    --bg:        #0e0e1a;
+    --bg2:       #16162a;
+    --bg3:       #1e1e3a;
+    --fg:        #d5d5e3;
+    --fg-dim:    #8585a0;
+    --accent:    #4488dd;
+    --accent2:   #44cc77;
+    --accent3:   #ee9922;
+    --accent4:   #cc3850;
+    --accent5:   #aa66ee;
+    --cyan:      #00ffcc;
+    --yellow:    #ffff00;
+    --border:    #3d3d56;
+    --code-bg:   #12122a;
+    --sidebar-w: 260px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Segoe UI', 'Cascadia Code', 'Consolas', monospace;
+    background: var(--bg);
+    color: var(--fg);
+    line-height: 1.65;
+    font-size: 15px;
+  }
+
+  /* ── Sidebar ─────────────────────────────── */
+  #sidebar {
+    position: fixed; top:0; left:0; bottom:0;
+    width: var(--sidebar-w);
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    padding: 20px 16px;
+    z-index: 100;
+  }
+  #sidebar::-webkit-scrollbar { width:6px; }
+  #sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius:3px; }
+  #sidebar h2 {
+    font-size: 18px;
+    margin-bottom: 4px;
+    background: linear-gradient(90deg, var(--accent4), var(--accent3), var(--accent2), var(--accent), var(--accent5));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 2px;
+  }
+  #sidebar .subtitle {
+    font-size: 11px;
+    color: var(--fg-dim);
+    margin-bottom: 18px;
+    letter-spacing: 1px;
+  }
+  #sidebar nav a {
+    display: block;
+    color: var(--fg-dim);
+    text-decoration: none;
+    padding: 4px 8px;
+    font-size: 13px;
+    border-radius: 4px;
+    transition: all .15s;
+  }
+  #sidebar nav a:hover, #sidebar nav a.active {
+    color: var(--fg);
+    background: var(--bg3);
+  }
+  #sidebar nav .section-label {
+    color: var(--accent);
+    font-size: 11px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    margin-top: 14px;
+    margin-bottom: 4px;
+    padding-left: 8px;
+  }
+
+  /* ── Main Content ────────────────────────── */
+  main {
+    margin-left: var(--sidebar-w);
+    padding: 40px 50px 80px;
+    max-width: 900px;
+  }
+  h1 {
+    font-size: 36px;
+    margin-bottom: 8px;
+    background: linear-gradient(90deg, var(--accent4), var(--accent3), var(--accent2), var(--accent), var(--accent5));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 3px;
+  }
+  h1 + .tagline {
+    font-size: 14px;
+    color: var(--fg-dim);
+    margin-bottom: 32px;
+    font-style: italic;
+  }
+  h2 {
+    font-size: 24px;
+    color: var(--accent);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 6px;
+    margin-top: 48px;
+    margin-bottom: 16px;
+  }
+  h3 {
+    font-size: 18px;
+    color: var(--accent2);
+    margin-top: 28px;
+    margin-bottom: 10px;
+  }
+  h4 {
+    font-size: 15px;
+    color: var(--accent3);
+    margin-top: 20px;
+    margin-bottom: 8px;
+  }
+  p { margin-bottom: 12px; }
+  a { color: var(--accent); }
+  ul, ol { padding-left: 24px; margin-bottom: 12px; }
+  li { margin-bottom: 4px; }
+
+  /* ── Code ────────────────────────────────── */
+  code {
+    background: var(--code-bg);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-family: 'Cascadia Code', 'Consolas', monospace;
+    font-size: 13.5px;
+    color: var(--cyan);
+  }
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px 20px;
+    overflow-x: auto;
+    margin-bottom: 16px;
+    font-size: 13px;
+    line-height: 1.55;
+  }
+  pre code {
+    background: none;
+    padding: 0;
+    color: var(--fg);
+  }
+  .kw  { color: var(--accent4); }    /* keyword */
+  .fn  { color: var(--accent); }     /* function name */
+  .str { color: var(--accent2); }    /* string */
+  .num { color: var(--cyan); }       /* number */
+  .cmt { color: var(--fg-dim); }     /* comment */
+
+  /* ── Tables ──────────────────────────────── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 16px;
+    font-size: 13.5px;
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 8px 12px;
+    text-align: left;
+  }
+  th {
+    background: var(--bg3);
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .8px;
+  }
+  td code { font-size: 12.5px; }
+  tr:nth-child(even) td { background: rgba(255,255,255,.02); }
+
+  /* ── Spec cards ──────────────────────────── */
+  .specs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .spec-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px;
+  }
+  .spec-card .label {
+    font-size: 11px;
+    color: var(--fg-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+  .spec-card .value {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--accent2);
+  }
+  .spec-card .detail {
+    font-size: 12px;
+    color: var(--fg-dim);
+    margin-top: 4px;
+  }
+
+  /* ── Palette grid ────────────────────────── */
+  .palette-grid {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 3px;
+    max-width: 440px;
+    margin-bottom: 16px;
+  }
+  .pal-cell {
+    aspect-ratio: 1;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 700;
+    border: 1px solid rgba(255,255,255,.1);
+    cursor: default;
+    transition: transform .1s;
+  }
+  .pal-cell:hover { transform: scale(1.15); }
+
+  /* ── Key badges ──────────────────────────── */
+  kbd {
+    display: inline-block;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 7px;
+    font-size: 12px;
+    font-family: inherit;
+    color: var(--accent3);
+    min-width: 22px;
+    text-align: center;
+    box-shadow: 0 2px 0 var(--border);
+  }
+
+  /* ── Function reference ──────────────────── */
+  .func-sig {
+    background: var(--code-bg);
+    border-left: 3px solid var(--accent);
+    padding: 10px 16px;
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 8px;
+    font-family: 'Cascadia Code', 'Consolas', monospace;
+    font-size: 14px;
+    color: var(--cyan);
+  }
+  .func-desc {
+    padding-left: 16px;
+    margin-bottom: 20px;
+    color: var(--fg-dim);
+  }
+  .func-desc code { color: var(--accent3); }
+
+  /* ── Alert / tip boxes ───────────────────── */
+  .tip {
+    background: rgba(68,204,119,.08);
+    border-left: 3px solid var(--accent2);
+    padding: 12px 16px;
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 16px;
+    font-size: 13.5px;
+  }
+  .tip::before { content: "💡 "; }
+  .warn {
+    background: rgba(238,153,34,.08);
+    border-left: 3px solid var(--accent3);
+    padding: 12px 16px;
+    border-radius: 0 6px 6px 0;
+    margin-bottom: 16px;
+    font-size: 13.5px;
+  }
+  .warn::before { content: "⚠ "; }
+
+  /* ── Responsive ──────────────────────────── */
+  @media (max-width: 800px) {
+    #sidebar { display: none; }
+    main { margin-left: 0; padding: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SIDEBAR NAVIGATION
+     ═══════════════════════════════════════════════════════════ -->
+<div id="sidebar">
+  <h2>CHROMAPLEX 8</h2>
+  <div class="subtitle">Fantasy Game Console · v1.0</div>
+  <nav>
+    <div class="section-label">Getting Started</div>
+    <a href="#overview">Overview</a>
+    <a href="#specs">Hardware Specs</a>
+    <a href="#building">Building from Source</a>
+    <a href="#running">Running</a>
+    <a href="#cli">Command Line Options</a>
+
+    <div class="section-label">Using the Console</div>
+    <a href="#home-screen">Home Screen</a>
+    <a href="#controls">Game Controls</a>
+    <a href="#cart-format">Cart Format</a>
+
+    <div class="section-label">Built-in Editors</div>
+    <a href="#editor-overview">Editor Overview</a>
+    <a href="#code-editor">Code Editor (F1)</a>
+    <a href="#sprite-editor">Sprite Editor (F2)</a>
+    <a href="#map-editor">Map Editor (F3)</a>
+    <a href="#sfx-editor">SFX Editor (F4)</a>
+
+    <div class="section-label">Lua API Reference</div>
+    <a href="#callbacks">Callbacks</a>
+    <a href="#api-drawing">Drawing</a>
+    <a href="#api-sprites">Sprites</a>
+    <a href="#api-map">Map</a>
+    <a href="#api-camera">Camera &amp; Clip</a>
+    <a href="#api-palette">Palette</a>
+    <a href="#api-input">Input</a>
+    <a href="#api-audio">Audio</a>
+    <a href="#api-memory">Memory</a>
+    <a href="#api-modules">Modules</a>
+    <a href="#api-math">Math &amp; System</a>
+    <a href="#constants">Constants</a>
+
+    <div class="section-label">Reference</div>
+    <a href="#palette-ref">64-Color Palette</a>
+    <a href="#modules-ref">Expansion Modules</a>
+    <a href="#examples">Example Cart</a>
+  </nav>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     MAIN CONTENT
+     ═══════════════════════════════════════════════════════════ -->
+<main>
+
+<!-- ─── HEADER ─────────────────────────────────────────────── -->
+<h1>CHROMAPLEX 8</h1>
+<p class="tagline">"Plug in. Power up. Play." — Fantasy Game Console Documentation v1.0</p>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<h2 id="overview">Overview</h2>
+<p>
+  <strong>Chromaplex 8</strong> is a fantasy game console — a self-contained virtual
+  machine for making, sharing, and playing small retro-style games. It includes a
+  256×144 widescreen display, 64-color palette, 4-channel synthesizer, and a complete
+  Lua 5.4 scripting environment. Think of it as an imaginary console from a parallel
+  universe where the Super Nintendo had a built-in BASIC prompt.
+</p>
+<p>
+  Games are distributed as <strong>cartridges</strong> (plain <code>.lua</code> or
+  <code>.cx8</code> files) that contain code, sprite art, and map data all in one file.
+  The console ships with built-in editors for code, sprites, tile maps, and sound
+  effects — everything you need to create a complete game without leaving the console.
+</p>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<h2 id="specs">Hardware Specifications</h2>
+<div class="specs">
+  <div class="spec-card">
+    <div class="label">CPU</div>
+    <div class="value">CX8-A</div>
+    <div class="detail">Virtual CPU, 60 Hz tick rate</div>
+  </div>
+  <div class="spec-card">
+    <div class="label">GPU</div>
+    <div class="value">PRISM-64</div>
+    <div class="detail">256×144, 64 colors, hardware sprite scaling &amp; rotation</div>
+  </div>
+  <div class="spec-card">
+    <div class="label">APU</div>
+    <div class="value">WAVE-4</div>
+    <div class="detail">4 channels, 6 waveforms, ADSR envelopes</div>
+  </div>
+  <div class="spec-card">
+    <div class="label">RAM</div>
+    <div class="value">128 KB</div>
+    <div class="detail">Expandable to 256 KB via TURBO-RAM module</div>
+  </div>
+  <div class="spec-card">
+    <div class="label">Cart Size</div>
+    <div class="value">64 KB</div>
+    <div class="detail">No token limit. Expandable via CART-DOUBLER</div>
+  </div>
+  <div class="spec-card">
+    <div class="label">Sprites</div>
+    <div class="value">256 × 8×8</div>
+    <div class="detail">128×128 spritesheet, 16×16 grid</div>
+  </div>
+  <div class="spec-card">
+    <div class="label">Tile Map</div>
+    <div class="value">256×256</div>
+    <div class="detail">Each cell references a sprite index (0–255)</div>
+  </div>
+  <div class="spec-card">
+    <div class="label">Font</div>
+    <div class="value">4×6 px</div>
+    <div class="detail">Built-in bitmap font, ASCII 32–126</div>
+  </div>
+  <div class="spec-card">
+    <div class="label">Display</div>
+    <div class="value">16:9</div>
+    <div class="detail">256×144 widescreen, default 4× pixel scaling</div>
+  </div>
+  <div class="spec-card">
+    <div class="label">Audio</div>
+    <div class="value">44.1 kHz</div>
+    <div class="detail">Mono, 1024 sample buffer</div>
+  </div>
+  <div class="spec-card">
+    <div class="label">Scripting</div>
+    <div class="value">Lua 5.4</div>
+    <div class="detail">All API functions exposed as globals</div>
+  </div>
+  <div class="spec-card">
+    <div class="label">Modules</div>
+    <div class="value">5 Slots</div>
+    <div class="detail">Optional hardware expansion cartridges</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<h2 id="building">Building from Source</h2>
+<h3>Dependencies</h3>
+<ul>
+  <li><strong>GCC</strong> — via <a href="https://github.com/skeeto/w64devkit">w64devkit</a> (portable, no install needed)</li>
+  <li><strong>SDL2 2.30+</strong> — MinGW development build from <a href="https://libsdl.org">libsdl.org</a></li>
+  <li><strong>Lua 5.4</strong> — compiled as a static library</li>
+</ul>
+<h3>Directory Layout</h3>
+<pre><code>Chromaplex 8/
+├── src/              <span class="cmt"># All source files (*.c, *.h)</span>
+├── deps/
+│   ├── w64devkit/    <span class="cmt"># Portable GCC toolchain</span>
+│   ├── SDL2-2.30.11/ <span class="cmt"># SDL2 MinGW build</span>
+│   └── lua-5.4.7/    <span class="cmt"># Lua source (compiled to liblua.a)</span>
+├── carts/            <span class="cmt"># Cartridge files (.lua, .cx8)</span>
+├── build/            <span class="cmt"># Output directory</span>
+├── docs/             <span class="cmt"># This documentation</span>
+├── build.bat         <span class="cmt"># Windows build script</span>
+└── build.ps1         <span class="cmt"># PowerShell build script</span></code></pre>
+
+<h3>Compile Command</h3>
+<pre><code>deps\w64devkit\bin\gcc.exe -std=c11 -O2 -Wall -Wextra ^
+  -I"deps\SDL2-2.30.11\x86_64-w64-mingw32\include\SDL2" ^
+  -I"deps\lua-5.4.7\src" -Isrc ^
+  src\main.c src\cx8_gpu.c src\cx8_font.c src\cx8_input.c ^
+  src\cx8_apu.c src\cx8_memory.c src\cx8_cart.c ^
+  src\cx8_modules.c src\cx8_scripting.c src\cx8_home.c ^
+  src\cx8_editor.c src\cx8_ed_code.c src\cx8_ed_sprite.c ^
+  src\cx8_ed_map.c src\cx8_ed_sfx.c ^
+  -L"deps\SDL2-2.30.11\x86_64-w64-mingw32\lib" ^
+  -L"deps\lua-5.4.7\src" ^
+  -lmingw32 -lSDL2main -lSDL2 -llua -lm ^
+  -o build\chromaplex8.exe</code></pre>
+<p>Or simply run <code>build.bat</code> / <code>build.ps1</code>.</p>
+
+<div class="tip">Copy <code>SDL2.dll</code> from <code>deps\SDL2-2.30.11\x86_64-w64-mingw32\bin\</code> into the <code>build\</code> folder next to the exe.</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<h2 id="running">Running</h2>
+<pre><code><span class="cmt"># Launch the home screen (default)</span>
+chromaplex8.exe
+
+<span class="cmt"># Run a specific cartridge directly</span>
+chromaplex8.exe carts\hello.lua
+
+<span class="cmt"># Specify a custom carts folder and window scale</span>
+chromaplex8.exe --carts mygames --scale 3</code></pre>
+
+<p>
+  If no cartridge path is given, the console boots to the <strong>home screen</strong>,
+  where you can browse and launch carts found in the <code>carts/</code> directory.
+</p>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<h2 id="cli">Command Line Options</h2>
+<table>
+  <tr><th>Option</th><th>Description</th><th>Default</th></tr>
+  <tr><td><code>[file.lua]</code></td><td>Path to a cart file to run immediately</td><td>—</td></tr>
+  <tr><td><code>--carts DIR</code></td><td>Directory to scan for cartridges on the home screen</td><td><code>carts</code></td></tr>
+  <tr><td><code>--scale N</code></td><td>Window pixel scaling (1–8)</td><td><code>4</code></td></tr>
+  <tr><td><code>--mod ID</code></td><td>Pre-load an expansion module by ID (0–4)</td><td>—</td></tr>
+  <tr><td><code>--help</code></td><td>Show help text and exit</td><td>—</td></tr>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<h2 id="home-screen">Home Screen</h2>
+<p>
+  The home screen is a PICO-8-style cart browser. It scans the carts directory for
+  <code>.lua</code> and <code>.cx8</code> files and displays them in a scrollable list.
+  Cart titles and authors are automatically extracted from file headers.
+</p>
+<table>
+  <tr><th>Key</th><th>Action</th></tr>
+  <tr><td><kbd>↑</kbd> <kbd>↓</kbd></td><td>Navigate the cart list</td></tr>
+  <tr><td><kbd>Z</kbd></td><td>Run the selected cartridge</td></tr>
+  <tr><td><kbd>X</kbd></td><td>Open the selected cartridge in the editor</td></tr>
+  <tr><td><kbd>A</kbd></td><td>Create a new blank cartridge</td></tr>
+  <tr><td><kbd>Esc</kbd></td><td>Quit the console</td></tr>
+</table>
+<p>
+  While a game is running, press <kbd>Esc</kbd> to return to the home screen.
+</p>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<h2 id="controls">Game Controls</h2>
+<p>
+  The Chromaplex 8 has an 8-button controller: a 4-direction D-pad plus four action buttons
+  (<strong>A</strong>, <strong>B</strong>, <strong>X</strong>, <strong>Y</strong>).
+</p>
+<table>
+  <tr><th>Console Button</th><th>Keyboard Keys</th><th>Button ID</th></tr>
+  <tr><td>D-Pad Left</td><td><kbd>←</kbd></td><td><code>BTN_LEFT</code> (0)</td></tr>
+  <tr><td>D-Pad Right</td><td><kbd>→</kbd></td><td><code>BTN_RIGHT</code> (1)</td></tr>
+  <tr><td>D-Pad Up</td><td><kbd>↑</kbd></td><td><code>BTN_UP</code> (2)</td></tr>
+  <tr><td>D-Pad Down</td><td><kbd>↓</kbd></td><td><code>BTN_DOWN</code> (3)</td></tr>
+  <tr><td>A</td><td><kbd>Z</kbd> or <kbd>C</kbd></td><td><code>BTN_A</code> (4)</td></tr>
+  <tr><td>B</td><td><kbd>X</kbd> or <kbd>V</kbd></td><td><code>BTN_B</code> (5)</td></tr>
+  <tr><td>X</td><td><kbd>A</kbd> or <kbd>S</kbd></td><td><code>BTN_X</code> (6)</td></tr>
+  <tr><td>Y</td><td><kbd>D</kbd> or <kbd>F</kbd></td><td><code>BTN_Y</code> (7)</td></tr>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<h2 id="cart-format">Cartridge Format</h2>
+<p>
+  Cartridges are plain text files. A <code>.lua</code> file with a header comment is the simplest format.
+  The <code>.cx8</code> format embeds sprite and map data after the Lua source.
+</p>
+<h3>Minimal Cart</h3>
+<pre><code><span class="cmt">--[[cx8 cart]]</span>
+<span class="cmt">-- title:  My Game</span>
+<span class="cmt">-- author: Your Name</span>
+<span class="cmt">-- desc:   A short description</span>
+
+<span class="kw">function</span> <span class="fn">_init</span>()
+  <span class="cmt">-- called once at start</span>
+<span class="kw">end</span>
+
+<span class="kw">function</span> <span class="fn">_update</span>()
+  <span class="cmt">-- called every frame (60 fps)</span>
+<span class="kw">end</span>
+
+<span class="kw">function</span> <span class="fn">_draw</span>()
+  cls(<span class="num">0</span>)
+  print(<span class="str">"HELLO WORLD"</span>, <span class="num">100</span>, <span class="num">68</span>, <span class="num">7</span>)
+<span class="kw">end</span></code></pre>
+
+<h3>.cx8 Embedded Data Sections</h3>
+<p>When saved from the built-in editor, the cart file includes hex-encoded data sections:</p>
+<pre><code><span class="cmt">--[[cx8 cart]]</span>
+<span class="cmt">-- title: My Game</span>
+
+<span class="cmt">-- ... your Lua code above ...</span>
+
+__sprites__
+<span class="cmt">(hex-encoded 128×128 spritesheet data)</span>
+__map__
+<span class="cmt">(hex-encoded 256×256 map data)</span>
+__end__</code></pre>
+
+<h3>Header Fields</h3>
+<table>
+  <tr><th>Field</th><th>Description</th></tr>
+  <tr><td><code>--[[cx8 cart]]</code></td><td>Required magic header (first line)</td></tr>
+  <tr><td><code>-- title: ...</code></td><td>Cart title (shown on home screen)</td></tr>
+  <tr><td><code>-- author: ...</code></td><td>Author name</td></tr>
+  <tr><td><code>-- desc: ...</code></td><td>Short description</td></tr>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<h2 id="editor-overview">Built-in Editors</h2>
+<p>
+  The Chromaplex 8 includes four built-in editors that run entirely within the console's
+  own 256×144 display. Switch between them using the function keys.
+</p>
+<table>
+  <tr><th>Key</th><th>Editor</th><th>Description</th></tr>
+  <tr><td><kbd>F1</kbd></td><td>Code</td><td>Lua script editor with syntax highlighting</td></tr>
+  <tr><td><kbd>F2</kbd></td><td>Sprite</td><td>8×8 pixel art editor with 64-color palette</td></tr>
+  <tr><td><kbd>F3</kbd></td><td>Map</td><td>256×256 tile map editor</td></tr>
+  <tr><td><kbd>F4</kbd></td><td>SFX</td><td>Sound effect editor with waveform preview</td></tr>
+</table>
+<h3>Global Editor Controls</h3>
+<table>
+  <tr><th>Key</th><th>Action</th></tr>
+  <tr><td><kbd>Ctrl</kbd>+<kbd>S</kbd></td><td>Save cartridge to disk</td></tr>
+  <tr><td><kbd>Ctrl</kbd>+<kbd>R</kbd></td><td>Save &amp; run the cartridge</td></tr>
+  <tr><td><kbd>Esc</kbd></td><td>Exit editor and return to home screen</td></tr>
+</table>
+
+<!-- ─── Code Editor ────────────────────────────────────────── -->
+<h3 id="code-editor">Code Editor (F1)</h3>
+<p>
+  A full-featured text editor with Lua syntax highlighting. Supports up to 4096 lines
+  of code with 256 columns per line.
+</p>
+<h4>Syntax Highlighting</h4>
+<ul>
+  <li><span style="color:var(--accent4)">Keywords</span> — <code>function</code>, <code>end</code>, <code>if</code>, <code>then</code>, <code>else</code>, <code>for</code>, <code>while</code>, <code>do</code>, <code>return</code>, <code>local</code>, <code>nil</code>, <code>true</code>, <code>false</code>, <code>and</code>, <code>or</code>, <code>not</code>, <code>repeat</code>, <code>until</code>, <code>break</code>, <code>in</code>, <code>elseif</code>, <code>goto</code></li>
+  <li><span style="color:var(--accent2)">Built-in functions</span> — All CX8 API functions (<code>cls</code>, <code>spr</code>, <code>btn</code>, etc.)</li>
+  <li><span style="color:var(--accent2)">Strings</span> — <code>"text"</code> and <code>'text'</code></li>
+  <li><span style="color:var(--fg-dim)">Comments</span> — Lines starting with <code>--</code></li>
+  <li><span style="color:var(--cyan)">Numbers</span> — Numeric literals</li>
+</ul>
+<h4>Controls</h4>
+<table>
+  <tr><th>Key</th><th>Action</th></tr>
+  <tr><td><kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd></td><td>Move cursor</td></tr>
+  <tr><td><kbd>Home</kbd> / <kbd>End</kbd></td><td>Start / end of line</td></tr>
+  <tr><td><kbd>Page Up</kbd> / <kbd>Page Down</kbd></td><td>Scroll a full page</td></tr>
+  <tr><td><kbd>Enter</kbd></td><td>New line (auto-indents after <code>function</code>, <code>if</code>, <code>for</code>, <code>while</code>, <code>do</code>, <code>then</code>)</td></tr>
+  <tr><td><kbd>Backspace</kbd></td><td>Delete character before cursor</td></tr>
+  <tr><td><kbd>Delete</kbd></td><td>Delete character at cursor</td></tr>
+  <tr><td><kbd>Tab</kbd></td><td>Insert 2 spaces</td></tr>
+</table>
+<p>The status bar at the bottom shows the current line/column and key hints.</p>
+
+<!-- ─── Sprite Editor ──────────────────────────────────────── -->
+<h3 id="sprite-editor">Sprite Editor (F2)</h3>
+<p>
+  A pixel art editor for designing 8×8 sprites. The current sprite is shown in a
+  zoomed 9× canvas on the left, with a 2× preview and the full spritesheet overview
+  on the right. The 64-color palette bar is displayed at the bottom.
+</p>
+<table>
+  <tr><th>Key</th><th>Action</th></tr>
+  <tr><td><kbd>Arrow keys</kbd></td><td>Move the pixel cursor</td></tr>
+  <tr><td><kbd>Z</kbd></td><td>Draw with current color</td></tr>
+  <tr><td><kbd>X</kbd></td><td>Erase (set to color 0)</td></tr>
+  <tr><td><kbd>C</kbd></td><td>Pick color from pixel under cursor</td></tr>
+  <tr><td><kbd>-</kbd> / <kbd>=</kbd></td><td>Prev / next color in palette</td></tr>
+  <tr><td><kbd>F</kbd></td><td>Flood fill</td></tr>
+  <tr><td><kbd>D</kbd></td><td>Clear the entire sprite</td></tr>
+  <tr><td><kbd>Shift</kbd>+<kbd>↑↓←→</kbd></td><td>Select sprite on the spritesheet</td></tr>
+</table>
+
+<!-- ─── Map Editor ─────────────────────────────────────────── -->
+<h3 id="map-editor">Map Editor (F3)</h3>
+<p>
+  A tile map editor with a scrollable view of the 256×256 tile grid. Each cell holds a
+  sprite index. A tile selector panel on the right lets you pick which sprite to paint.
+  Tiles are rendered with their dominant color for quick overview.
+</p>
+<table>
+  <tr><th>Key</th><th>Action</th></tr>
+  <tr><td><kbd>Arrow keys</kbd></td><td>Move cursor on the map</td></tr>
+  <tr><td><kbd>Z</kbd></td><td>Place current tile at cursor</td></tr>
+  <tr><td><kbd>X</kbd></td><td>Erase tile (set to 0)</td></tr>
+  <tr><td><kbd>C</kbd></td><td>Pick tile from cell under cursor</td></tr>
+  <tr><td><kbd>Shift</kbd>+<kbd>↑↓←→</kbd></td><td>Select tile in the tile selector</td></tr>
+</table>
+
+<!-- ─── SFX Editor ─────────────────────────────────────────── -->
+<h3 id="sfx-editor">SFX Editor (F4)</h3>
+<p>
+  A sound effect editor with 64 preset slots. Shows a waveform visualization and an
+  ADSR envelope graph for the currently selected sound.
+</p>
+<table>
+  <tr><th>Key</th><th>Action</th></tr>
+  <tr><td><kbd>↑</kbd> / <kbd>↓</kbd></td><td>Select parameter (waveform, frequency, volume, attack, decay, sustain, release)</td></tr>
+  <tr><td><kbd>←</kbd> / <kbd>→</kbd></td><td>Adjust selected parameter value</td></tr>
+  <tr><td><kbd>Z</kbd></td><td>Play / preview the sound</td></tr>
+  <tr><td><kbd>X</kbd></td><td>Stop sound</td></tr>
+  <tr><td><kbd>Shift</kbd>+<kbd>↑↓</kbd></td><td>Change SFX slot (0–63)</td></tr>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════
+     LUA API REFERENCE
+     ═══════════════════════════════════════════════════════════ -->
+<h2 id="callbacks">Callbacks</h2>
+<p>
+  Your cartridge can define three special functions that the console calls automatically:
+</p>
+<div class="func-sig">function _init()</div>
+<div class="func-desc">Called <strong>once</strong> when the cartridge starts. Use this to set up your game state, generate sprites, initialise variables.</div>
+
+<div class="func-sig">function _update()</div>
+<div class="func-desc">Called <strong>every frame</strong> (60 times per second) before <code>_draw()</code>. Handle input, move objects, update game logic here.</div>
+
+<div class="func-sig">function _draw()</div>
+<div class="func-desc">Called <strong>every frame</strong> after <code>_update()</code>. All rendering should happen here. Always call <code>cls()</code> first to clear the screen.</div>
+
+<!-- ─── DRAWING API ────────────────────────────────────────── -->
+<h2 id="api-drawing">Drawing API</h2>
+
+<div class="func-sig">cls([col])</div>
+<div class="func-desc">Clear the entire screen to color <code>col</code> (default <code>0</code>, black).</div>
+
+<div class="func-sig">pset(x, y, col)</div>
+<div class="func-desc">Set pixel at <code>(x, y)</code> to color <code>col</code> (0–63).</div>
+
+<div class="func-sig">pget(x, y) → col</div>
+<div class="func-desc">Get the color index of the pixel at <code>(x, y)</code>.</div>
+
+<div class="func-sig">line(x0, y0, x1, y1, col)</div>
+<div class="func-desc">Draw a line from <code>(x0,y0)</code> to <code>(x1,y1)</code> in color <code>col</code>.</div>
+
+<div class="func-sig">rect(x0, y0, x1, y1, col)</div>
+<div class="func-desc">Draw a rectangle outline from <code>(x0,y0)</code> to <code>(x1,y1)</code>.</div>
+
+<div class="func-sig">rectfill(x0, y0, x1, y1, col)</div>
+<div class="func-desc">Draw a filled rectangle from <code>(x0,y0)</code> to <code>(x1,y1)</code>.</div>
+
+<div class="func-sig">circ(cx, cy, r, col)</div>
+<div class="func-desc">Draw a circle outline centered at <code>(cx,cy)</code> with radius <code>r</code>.</div>
+
+<div class="func-sig">circfill(cx, cy, r, col)</div>
+<div class="func-desc">Draw a filled circle centered at <code>(cx,cy)</code> with radius <code>r</code>.</div>
+
+<div class="func-sig">tri(x0, y0, x1, y1, x2, y2, col)</div>
+<div class="func-desc">Draw a triangle outline with vertices at <code>(x0,y0)</code>, <code>(x1,y1)</code>, <code>(x2,y2)</code>.</div>
+
+<div class="func-sig">trifill(x0, y0, x1, y1, x2, y2, col)</div>
+<div class="func-desc">Draw a filled triangle with vertices at <code>(x0,y0)</code>, <code>(x1,y1)</code>, <code>(x2,y2)</code>.</div>
+
+<div class="func-sig">print(str, [x], [y], [col]) → width</div>
+<div class="func-desc">
+  Print text <code>str</code> at position <code>(x, y)</code> in color <code>col</code> (default 7 = white).
+  Returns the width in pixels of the printed text. Characters are 4×6 pixels with 1px spacing.
+  Defaults: <code>x=0</code>, <code>y=0</code>, <code>col=7</code>.
+</div>
+
+<!-- ─── SPRITE API ─────────────────────────────────────────── -->
+<h2 id="api-sprites">Sprite API</h2>
+
+<div class="func-sig">spr(n, x, y, [w], [h], [flip_x], [flip_y], [scale], [angle])</div>
+<div class="func-desc">
+  Draw sprite <code>n</code> (0–255) at screen position <code>(x, y)</code>.<br>
+  <code>w</code>, <code>h</code> — size in sprite units (default 1×1 = 8×8 pixels). Use <code>2,2</code> for a 16×16 region.<br>
+  <code>flip_x</code>, <code>flip_y</code> — boolean, mirror horizontally/vertically.<br>
+  <code>scale</code> — float, 1.0 = normal size.<br>
+  <code>angle</code> — float, rotation in degrees.
+</div>
+
+<div class="func-sig">sset(x, y, col)</div>
+<div class="func-desc">Set a pixel on the spritesheet at <code>(x, y)</code> to color <code>col</code>. The spritesheet is 128×128 pixels.</div>
+
+<div class="func-sig">sget(x, y) → col</div>
+<div class="func-desc">Get the color index of a pixel on the spritesheet at <code>(x, y)</code>.</div>
+
+<div class="tip">
+  Sprite <code>n</code> occupies the 8×8 region starting at
+  <code>x = (n % 16) * 8</code>, <code>y = (n / 16) * 8</code> on the spritesheet.
+  Sprite 0 is top-left, sprite 15 is top-right, sprite 16 starts the second row.
+</div>
+
+<!-- ─── MAP API ────────────────────────────────────────────── -->
+<h2 id="api-map">Map API</h2>
+
+<div class="func-sig">map(cel_x, cel_y, sx, sy, cel_w, cel_h)</div>
+<div class="func-desc">
+  Draw a region of the tile map to the screen. <code>cel_x, cel_y</code> = top-left cell in map space.
+  <code>sx, sy</code> = screen destination. <code>cel_w, cel_h</code> = number of cells to draw wide/tall.
+  Each cell is rendered as the 8×8 sprite it references.
+</div>
+
+<div class="func-sig">mset(x, y, tile)</div>
+<div class="func-desc">Set map cell at <code>(x, y)</code> to sprite index <code>tile</code> (0–255).</div>
+
+<div class="func-sig">mget(x, y) → tile</div>
+<div class="func-desc">Get the sprite index stored in map cell <code>(x, y)</code>.</div>
+
+<!-- ─── CAMERA & CLIP ──────────────────────────────────────── -->
+<h2 id="api-camera">Camera &amp; Clipping</h2>
+
+<div class="func-sig">camera([x], [y], [zoom])</div>
+<div class="func-desc">
+  Set the camera offset and zoom level. All subsequent drawing is offset by <code>(-x, -y)</code> and
+  scaled by <code>zoom</code> (default 1.0). Call <code>camera()</code> with no arguments to reset.
+</div>
+
+<div class="func-sig">clip(x, y, w, h)</div>
+<div class="func-desc">Set a clipping rectangle. Only pixels inside this region will be drawn.
+  Call <code>clip()</code> with no arguments to reset to full screen.</div>
+
+<!-- ─── PALETTE ────────────────────────────────────────────── -->
+<h2 id="api-palette">Palette</h2>
+
+<div class="func-sig">pal(c0, c1)</div>
+<div class="func-desc">
+  Remap draw color <code>c0</code> to display as color <code>c1</code>. Affects all subsequent drawing.
+  Useful for palette swaps (e.g., changing a character's outfit color).
+</div>
+
+<div class="func-sig">pal()</div>
+<div class="func-desc">Reset all palette remaps to their defaults.</div>
+
+<!-- ─── INPUT ──────────────────────────────────────────────── -->
+<h2 id="api-input">Input API</h2>
+
+<div class="func-sig">btn(id) → bool</div>
+<div class="func-desc">Returns <code>true</code> if button <code>id</code> is currently <strong>held down</strong>.</div>
+
+<div class="func-sig">btnp(id) → bool</div>
+<div class="func-desc">Returns <code>true</code> if button <code>id</code> was <strong>just pressed</strong> this frame (rising edge). Useful for menu navigation and one-shot actions.</div>
+
+<div class="tip">Use the <code>BTN_*</code> constants instead of raw numbers: <code>btn(BTN_LEFT)</code>, <code>btnp(BTN_A)</code>.</div>
+
+<!-- ─── AUDIO API ──────────────────────────────────────────── -->
+<h2 id="api-audio">Audio API</h2>
+
+<div class="func-sig">sfx(channel, freq, [vol], [waveform], [duty])</div>
+<div class="func-desc">
+  Start playing a sound on <code>channel</code> (0–3, or 0–15 with SYNTHWAVE-16).<br>
+  <code>freq</code> — frequency in Hz (e.g., 440 for concert A).<br>
+  <code>vol</code> — volume 0.0–1.0 (default 0.5).<br>
+  <code>waveform</code> — <code>WAVE_SQUARE</code>, <code>WAVE_TRIANGLE</code>, <code>WAVE_SAW</code>, <code>WAVE_NOISE</code>, <code>WAVE_PULSE</code>, or <code>WAVE_SINE</code> (default <code>WAVE_SQUARE</code>).<br>
+  <code>duty</code> — pulse width / duty cycle 0.0–1.0 (default 0.5). Only meaningful for <code>WAVE_PULSE</code>.
+</div>
+
+<div class="func-sig">envelope(channel, attack, decay, sustain, release)</div>
+<div class="func-desc">
+  Set the ADSR envelope for a channel. All times are in <strong>seconds</strong>.<br>
+  <code>attack</code> — time to ramp from 0 to full volume.<br>
+  <code>decay</code> — time to fall from full volume to sustain level.<br>
+  <code>sustain</code> — volume level during the sustain phase (0.0–1.0).<br>
+  <code>release</code> — time to fade to 0 after the note ends.
+</div>
+
+<div class="func-sig">quiet([channel])</div>
+<div class="func-desc">
+  Stop a specific channel, or call <code>quiet()</code> with no arguments to silence all channels.
+</div>
+
+<pre><code><span class="cmt">-- Play a short "coin" sound effect</span>
+sfx(<span class="num">0</span>, <span class="num">880</span>, <span class="num">0.3</span>, WAVE_SQUARE)
+envelope(<span class="num">0</span>, <span class="num">0.01</span>, <span class="num">0.1</span>, <span class="num">0.0</span>, <span class="num">0.05</span>)
+
+<span class="cmt">-- Play a bass note on channel 1</span>
+sfx(<span class="num">1</span>, <span class="num">110</span>, <span class="num">0.6</span>, WAVE_TRIANGLE)
+envelope(<span class="num">1</span>, <span class="num">0.05</span>, <span class="num">0.2</span>, <span class="num">0.4</span>, <span class="num">0.3</span>)</code></pre>
+
+<!-- ─── MEMORY API ─────────────────────────────────────────── -->
+<h2 id="api-memory">Memory API</h2>
+<p>Direct access to the console's flat address space (128 KB base RAM).</p>
+
+<div class="func-sig">peek(addr) → val</div>
+<div class="func-desc">Read a single byte (0–255) from address <code>addr</code>.</div>
+
+<div class="func-sig">poke(addr, val)</div>
+<div class="func-desc">Write byte <code>val</code> (0–255) to address <code>addr</code>.</div>
+
+<div class="func-sig">peek16(addr) → val</div>
+<div class="func-desc">Read a 16-bit value (little-endian) from <code>addr</code>.</div>
+
+<div class="func-sig">poke16(addr, val)</div>
+<div class="func-desc">Write a 16-bit value to <code>addr</code>.</div>
+
+<div class="func-sig">memcpy(dest, src, len)</div>
+<div class="func-desc">Copy <code>len</code> bytes from address <code>src</code> to address <code>dest</code>.</div>
+
+<div class="func-sig">memset(dest, val, len)</div>
+<div class="func-desc">Fill <code>len</code> bytes at address <code>dest</code> with value <code>val</code>.</div>
+
+<!-- ─── MODULE API ─────────────────────────────────────────── -->
+<h2 id="api-modules">Module API</h2>
+
+<div class="func-sig">mod_load(id) → bool</div>
+<div class="func-desc">Load expansion module <code>id</code> (0–4). Returns <code>true</code> on success. See the <a href="#modules-ref">Modules Reference</a> for IDs.</div>
+
+<div class="func-sig">mod_check(id) → bool</div>
+<div class="func-desc">Returns <code>true</code> if module <code>id</code> is currently loaded.</div>
+
+<div class="func-sig">mod_info(id) → table | nil</div>
+<div class="func-desc">
+  Returns a table with information about the module, or <code>nil</code> if the ID is invalid.<br>
+  Fields: <code>name</code>, <code>manufacturer</code>, <code>description</code>, <code>flavor</code>, <code>loaded</code> (boolean).
+</div>
+
+<pre><code><span class="cmt">-- Load extra RAM and check it worked</span>
+<span class="kw">if</span> mod_load(MOD_TURBO_RAM) <span class="kw">then</span>
+  print(<span class="str">"256 KB RAM UNLOCKED!"</span>, <span class="num">10</span>, <span class="num">10</span>, <span class="num">11</span>)
+<span class="kw">end</span>
+
+<span class="cmt">-- Query module info</span>
+<span class="kw">local</span> info = mod_info(MOD_SYNTHWAVE16)
+print(info.name)          <span class="cmt">-- "SYNTHWAVE-16"</span>
+print(info.manufacturer)  <span class="cmt">-- "AudioLux Labs"</span></code></pre>
+
+<!-- ─── MATH & SYSTEM ──────────────────────────────────────── -->
+<h2 id="api-math">Math &amp; System</h2>
+
+<div class="func-sig">rnd([max]) → number</div>
+<div class="func-desc">Returns a random float in the range [0, <code>max</code>). Default <code>max</code> is 1.0.</div>
+
+<div class="func-sig">flr(x) → number</div>
+<div class="func-desc">Floor — rounds <code>x</code> down to nearest integer.</div>
+
+<div class="func-sig">ceil(x) → number</div>
+<div class="func-desc">Ceiling — rounds <code>x</code> up to nearest integer.</div>
+
+<div class="func-sig">sin(x) → number</div>
+<div class="func-desc">
+  Sine function. <strong>Input is 0–1</strong> (not radians!), where 1.0 = a full turn.
+  This matches PICO-8 convention. Returns values in the range [-1, 1].
+</div>
+
+<div class="func-sig">cos(x) → number</div>
+<div class="func-desc">
+  Cosine function. <strong>Input is 0–1</strong> (not radians!), where 1.0 = a full turn.
+</div>
+
+<div class="func-sig">atan2(dx, dy) → number</div>
+<div class="func-desc">
+  Returns the angle from the origin to point <code>(dx, dy)</code> as a value in the range [0, 1),
+  where 0 = right, 0.25 = up, 0.5 = left, 0.75 = down.
+</div>
+
+<div class="func-sig">sgn(x) → number</div>
+<div class="func-desc">Returns the sign of <code>x</code>: -1, 0, or 1.</div>
+
+<div class="func-sig">mid(a, b, c) → number</div>
+<div class="func-desc">Returns the middle value of the three arguments. Useful for clamping: <code>mid(lo, val, hi)</code>.</div>
+
+<div class="func-sig">time() → number</div>
+<div class="func-desc">Returns the number of seconds elapsed since the cartridge started running.</div>
+
+<div class="warn">
+  <strong>sin/cos use turns, not radians!</strong>
+  <code>sin(0.25)</code> = -1 (pointing up), not <code>sin(0.25 radians)</code>.
+  This is PICO-8 compatible behavior.
+</div>
+
+<!-- ─── CONSTANTS ──────────────────────────────────────────── -->
+<h2 id="constants">Constants</h2>
+<p>These global constants are available in all cartridges:</p>
+
+<h3>Button IDs</h3>
+<table>
+  <tr><th>Constant</th><th>Value</th></tr>
+  <tr><td><code>BTN_LEFT</code></td><td>0</td></tr>
+  <tr><td><code>BTN_RIGHT</code></td><td>1</td></tr>
+  <tr><td><code>BTN_UP</code></td><td>2</td></tr>
+  <tr><td><code>BTN_DOWN</code></td><td>3</td></tr>
+  <tr><td><code>BTN_A</code></td><td>4</td></tr>
+  <tr><td><code>BTN_B</code></td><td>5</td></tr>
+  <tr><td><code>BTN_X</code></td><td>6</td></tr>
+  <tr><td><code>BTN_Y</code></td><td>7</td></tr>
+</table>
+
+<h3>Waveform Types</h3>
+<table>
+  <tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+  <tr><td><code>WAVE_SQUARE</code></td><td>0</td><td>Classic chiptune square wave</td></tr>
+  <tr><td><code>WAVE_TRIANGLE</code></td><td>1</td><td>Smooth, mellow triangle wave</td></tr>
+  <tr><td><code>WAVE_SAW</code></td><td>2</td><td>Bright, buzzy sawtooth wave</td></tr>
+  <tr><td><code>WAVE_NOISE</code></td><td>3</td><td>White noise (LFSR)</td></tr>
+  <tr><td><code>WAVE_PULSE</code></td><td>4</td><td>Pulse wave with adjustable duty cycle</td></tr>
+  <tr><td><code>WAVE_SINE</code></td><td>5</td><td>Pure sine wave</td></tr>
+</table>
+
+<h3>Module IDs</h3>
+<table>
+  <tr><th>Constant</th><th>Value</th></tr>
+  <tr><td><code>MOD_TURBO_RAM</code></td><td>0</td></tr>
+  <tr><td><code>MOD_SYNTHWAVE16</code></td><td>1</td></tr>
+  <tr><td><code>MOD_PIXSTRETCH</code></td><td>2</td></tr>
+  <tr><td><code>MOD_CART_DOUBLER</code></td><td>3</td></tr>
+  <tr><td><code>MOD_NETLINK</code></td><td>4</td></tr>
+</table>
+
+<h3>Screen Dimensions</h3>
+<table>
+  <tr><th>Constant</th><th>Value</th></tr>
+  <tr><td><code>SCREEN_W</code></td><td>256</td></tr>
+  <tr><td><code>SCREEN_H</code></td><td>144</td></tr>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<h2 id="palette-ref">64-Color Palette Reference</h2>
+<p>
+  The PRISM-64 GPU provides a fixed 64-color SNES-inspired palette. Colors are indexed 0–63.
+  Use <code>pal(c0, c1)</code> to remap colors at draw time.
+</p>
+<div class="palette-grid" id="paletteGrid"></div>
+<script>
+(function() {
+  const pal = [
+    '#000000','#1B1B2F','#3D3D56','#5E5E7A','#8585A0','#ABABC4','#D5D5E3','#FFFFFF',
+    '#3A0008','#6B1020','#9B2035','#CC3850','#E85070','#FF7890','#FFA0B0','#FFCCD5',
+    '#3A1A00','#6B3400','#9B5500','#CC7700','#EE9922','#FFBB44','#FFDD88','#FFF0CC',
+    '#2A2A00','#556600','#77AA00','#99CC22','#BBEE44','#DDFF77','#EEFFAA','#F5FFDD',
+    '#003A10','#005520','#008838','#22AA55','#44CC77','#77EE99','#AAFFBB','#DDFFDD',
+    '#00152A','#003060','#004488','#2266BB','#4488DD','#6699EE','#88BBFF','#AADDFF',
+    '#220040','#441177','#6622AA','#8844CC','#AA66EE','#CC88FF','#DD99FF','#EECCFF',
+    '#4A2A10','#7A5030','#AA7850','#D4A070','#F0C898','#00FFCC','#FF0088','#FFFF00',
+  ];
+  const grid = document.getElementById('paletteGrid');
+  pal.forEach(function(hex, i) {
+    const el = document.createElement('div');
+    el.className = 'pal-cell';
+    el.style.background = hex;
+    // Determine text color for readability
+    const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+    const lum = (0.299*r + 0.587*g + 0.114*b);
+    el.style.color = lum > 140 ? '#000' : '#fff';
+    el.textContent = i;
+    el.title = i + ': ' + hex;
+    grid.appendChild(el);
+  });
+})();
+</script>
+
+<h3>Palette Rows</h3>
+<table>
+  <tr><th>Range</th><th>Category</th></tr>
+  <tr><td>0–7</td><td>Monochrome (black → white)</td></tr>
+  <tr><td>8–15</td><td>Reds &amp; warm tones</td></tr>
+  <tr><td>16–23</td><td>Oranges &amp; earth tones</td></tr>
+  <tr><td>24–31</td><td>Yellows &amp; lime greens</td></tr>
+  <tr><td>32–39</td><td>Greens</td></tr>
+  <tr><td>40–47</td><td>Blues</td></tr>
+  <tr><td>48–55</td><td>Purples &amp; magenta</td></tr>
+  <tr><td>56–63</td><td>Skin tones, metallics &amp; neon accents</td></tr>
+</table>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<h2 id="modules-ref">Expansion Modules</h2>
+<p>
+  Chromaplex 8 features a fictional "module bay" with 5 expansion cartridges that can
+  modify the virtual hardware at runtime. Load them with <code>mod_load(id)</code>.
+</p>
+<table>
+  <tr><th>ID</th><th>Name</th><th>Manufacturer</th><th>Effect</th></tr>
+  <tr>
+    <td><code>0</code></td>
+    <td><strong>TURBO-RAM 8X</strong></td>
+    <td>NovaByte Industries</td>
+    <td>+128 KB RAM expansion (128 → 256 KB total)</td>
+  </tr>
+  <tr>
+    <td><code>1</code></td>
+    <td><strong>SYNTHWAVE-16</strong></td>
+    <td>AudioLux Labs</td>
+    <td>Expands audio from 4 to 16 channels</td>
+  </tr>
+  <tr>
+    <td><code>2</code></td>
+    <td><strong>PIXEL-STRETCH PRO</strong></td>
+    <td>VisualFX Co.</td>
+    <td>Palette cycling, dithering modes, advanced FX (future)</td>
+  </tr>
+  <tr>
+    <td><code>3</code></td>
+    <td><strong>CART-DOUBLER</strong></td>
+    <td>MegaMedia</td>
+    <td>+64 KB cartridge storage (64 → 128 KB)</td>
+  </tr>
+  <tr>
+    <td><code>4</code></td>
+    <td><strong>NETLINK-1</strong></td>
+    <td>CyberConnect</td>
+    <td>Multiplayer networking module (future)</td>
+  </tr>
+</table>
+<p>
+  Each module has a unique "flavor" tagline accessible via <code>mod_info(id).flavor</code>.
+</p>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<h2 id="examples">Example: Complete Cartridge</h2>
+<p>A simple bouncing ball with sound effects:</p>
+<pre><code><span class="cmt">--[[cx8 cart]]</span>
+<span class="cmt">-- title:  Bouncy Ball</span>
+<span class="cmt">-- author: Chromaplex Team</span>
+
+<span class="kw">local</span> ball = { x = <span class="num">128</span>, y = <span class="num">72</span>, dx = <span class="num">2</span>, dy = <span class="num">1.5</span>, r = <span class="num">6</span> }
+
+<span class="kw">function</span> <span class="fn">_init</span>()
+  <span class="cmt">-- nothing to set up</span>
+<span class="kw">end</span>
+
+<span class="kw">function</span> <span class="fn">_update</span>()
+  ball.x = ball.x + ball.dx
+  ball.y = ball.y + ball.dy
+
+  <span class="cmt">-- Bounce off walls</span>
+  <span class="kw">if</span> ball.x - ball.r &lt; <span class="num">0</span> <span class="kw">or</span> ball.x + ball.r &gt; SCREEN_W <span class="kw">then</span>
+    ball.dx = -ball.dx
+    sfx(<span class="num">0</span>, <span class="num">440</span>, <span class="num">0.3</span>, WAVE_SQUARE)
+    envelope(<span class="num">0</span>, <span class="num">0.01</span>, <span class="num">0.05</span>, <span class="num">0.0</span>, <span class="num">0.02</span>)
+  <span class="kw">end</span>
+  <span class="kw">if</span> ball.y - ball.r &lt; <span class="num">0</span> <span class="kw">or</span> ball.y + ball.r &gt; SCREEN_H <span class="kw">then</span>
+    ball.dy = -ball.dy
+    sfx(<span class="num">0</span>, <span class="num">330</span>, <span class="num">0.3</span>, WAVE_TRIANGLE)
+    envelope(<span class="num">0</span>, <span class="num">0.01</span>, <span class="num">0.05</span>, <span class="num">0.0</span>, <span class="num">0.02</span>)
+  <span class="kw">end</span>
+<span class="kw">end</span>
+
+<span class="kw">function</span> <span class="fn">_draw</span>()
+  cls(<span class="num">0</span>)
+  circfill(ball.x, ball.y, ball.r, <span class="num">11</span>)
+  circ(ball.x, ball.y, ball.r, <span class="num">7</span>)
+  print(<span class="str">"BOUNCY BALL"</span>, <span class="num">4</span>, <span class="num">4</span>, <span class="num">7</span>)
+<span class="kw">end</span></code></pre>
+
+<h3>Tips for Making Games</h3>
+<ul>
+  <li>Always start <code>_draw()</code> with <code>cls()</code> to clear the previous frame.</li>
+  <li>Use <code>btnp()</code> for menus and one-shot actions; <code>btn()</code> for continuous movement.</li>
+  <li>Define sprites in <code>_init()</code> using <code>sset()</code>, or paint them in the sprite editor.</li>
+  <li>Use <code>camera()</code> for scrolling games — move the camera instead of every object.</li>
+  <li>Use <code>mid(lo, val, hi)</code> to clamp values to a range.</li>
+  <li>The <code>time()</code> function is great for animations: <code>sin(time() * 0.5)</code> gives a smooth oscillation.</li>
+  <li>Remember: <code>sin()</code> and <code>cos()</code> use turns (0–1), not radians.</li>
+  <li>Color 0 is black (transparent in sprites). Use colors 1–63 for visible sprite pixels.</li>
+</ul>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div style="margin-top:60px; padding-top:20px; border-top:1px solid var(--border); text-align:center; color:var(--fg-dim); font-size:12px;">
+  Chromaplex 8 · Fantasy Game Console · v1.0<br>
+  "Plug in. Power up. Play."
+</div>
+
+</main>
+</body>
+</html>

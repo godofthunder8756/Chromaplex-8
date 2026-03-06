@@ -11,6 +11,8 @@
 #include "cx8_input.h"
 #include "cx8_memory.h"
 #include "cx8_modules.h"
+#include "cx8_netlink.h"
+#include "cx8_pixstretch.h"
 #include <lua.h>
 #include <lauxlib.h>
 #include <lualib.h>
@@ -522,6 +524,286 @@ static int l_time(lua_State *L)
 }
 
 /* ═══════════════════════════════════════════════════════════════
+ *  NETLINK-1 NETWORKING API
+ * ═══════════════════════════════════════════════════════════════ */
+
+/* ok = net_host([port, name]) */
+static int l_net_host(lua_State *L)
+{
+    if (!cx8_module_is_loaded(CX8_MOD_NETLINK)) {
+        lua_pushboolean(L, false);
+        return 1;
+    }
+    int port = OPTINT(L, 1, CX8_NET_DEFAULT_PORT);
+    const char *name = luaL_optstring(L, 2, "Host");
+    lua_pushboolean(L, cx8_net_host(port, name));
+    return 1;
+}
+
+/* ok = net_join([name]) */
+static int l_net_join(lua_State *L)
+{
+    if (!cx8_module_is_loaded(CX8_MOD_NETLINK)) {
+        lua_pushboolean(L, false);
+        return 1;
+    }
+    const char *name = luaL_optstring(L, 1, "Player");
+    lua_pushboolean(L, cx8_net_join(name));
+    return 1;
+}
+
+/* ok = net_join_ip(ip, [port, name]) */
+static int l_net_join_ip(lua_State *L)
+{
+    if (!cx8_module_is_loaded(CX8_MOD_NETLINK)) {
+        lua_pushboolean(L, false);
+        return 1;
+    }
+    const char *ip = luaL_checkstring(L, 1);
+    int port = OPTINT(L, 2, CX8_NET_DEFAULT_PORT);
+    const char *name = luaL_optstring(L, 3, "Player");
+    lua_pushboolean(L, cx8_net_join_ip(ip, port, name));
+    return 1;
+}
+
+/* net_disconnect() */
+static int l_net_disconnect(lua_State *L)
+{
+    cx8_net_disconnect();
+    return 0;
+}
+
+/* ok = net_send(channel, data) */
+static int l_net_send(lua_State *L)
+{
+    int ch = CHECKINT(L, 1);
+    size_t len;
+    const char *data = luaL_checklstring(L, 2, &len);
+    lua_pushboolean(L, cx8_net_send(ch, data, (int)len));
+    return 1;
+}
+
+/* ok = net_send_to(player, channel, data) */
+static int l_net_send_to(lua_State *L)
+{
+    int player = CHECKINT(L, 1);
+    int ch     = CHECKINT(L, 2);
+    size_t len;
+    const char *data = luaL_checklstring(L, 3, &len);
+    lua_pushboolean(L, cx8_net_send_to(player, ch, data, (int)len));
+    return 1;
+}
+
+/* msg = net_recv() — returns table {from, channel, data} or nil */
+static int l_net_recv(lua_State *L)
+{
+    cx8_net_msg_t msg;
+    if (!cx8_net_recv(&msg)) {
+        lua_pushnil(L);
+        return 1;
+    }
+    lua_newtable(L);
+    lua_pushinteger(L, msg.from_player); lua_setfield(L, -2, "from");
+    lua_pushinteger(L, msg.channel);     lua_setfield(L, -2, "channel");
+    lua_pushlstring(L, msg.data, msg.data_len); lua_setfield(L, -2, "data");
+    return 1;
+}
+
+/* state = net_state() — 0=disconnected, 1=hosting, 2=joining, 3=connected, 4=error */
+static int l_net_state(lua_State *L)
+{
+    lua_pushinteger(L, (int)cx8_net_state());
+    return 1;
+}
+
+/* id = net_id() — my player ID (0=host) */
+static int l_net_id(lua_State *L)
+{
+    lua_pushinteger(L, cx8_net_player_id());
+    return 1;
+}
+
+/* count = net_peers() */
+static int l_net_peers(lua_State *L)
+{
+    lua_pushinteger(L, cx8_net_peer_count());
+    return 1;
+}
+
+/* info = net_peer(id) — returns {id, name, active} or nil */
+static int l_net_peer(lua_State *L)
+{
+    int id = CHECKINT(L, 1);
+    const cx8_net_peer_t *p = cx8_net_get_peer(id);
+    if (!p) {
+        lua_pushnil(L);
+        return 1;
+    }
+    lua_newtable(L);
+    lua_pushinteger(L, p->player_id); lua_setfield(L, -2, "id");
+    lua_pushstring(L, p->name);       lua_setfield(L, -2, "name");
+    lua_pushboolean(L, p->active);    lua_setfield(L, -2, "active");
+    return 1;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+ *  PIXEL-STRETCH PRO FX API
+ * ═══════════════════════════════════════════════════════════════ */
+
+/* fx_cycle(start, end, speed) */
+static int l_fx_cycle(lua_State *L)
+{
+    if (!cx8_module_is_loaded(CX8_MOD_PIXSTRETCH)) return 0;
+    int start = CHECKINT(L, 1);
+    int end   = CHECKINT(L, 2);
+    float spd = (float)luaL_optnumber(L, 3, 1.0);
+    cx8_fx_cycle(start, end, spd);
+    return 0;
+}
+
+/* fx_cycle_stop(start) */
+static int l_fx_cycle_stop(lua_State *L)
+{
+    if (!cx8_module_is_loaded(CX8_MOD_PIXSTRETCH)) return 0;
+    cx8_fx_cycle_stop(CHECKINT(L, 1));
+    return 0;
+}
+
+/* fx_dither(mode) */
+static int l_fx_dither(lua_State *L)
+{
+    if (!cx8_module_is_loaded(CX8_MOD_PIXSTRETCH)) return 0;
+    cx8_fx_dither(CHECKINT(L, 1));
+    return 0;
+}
+
+/* fx_fade(target, speed) */
+static int l_fx_fade(lua_State *L)
+{
+    if (!cx8_module_is_loaded(CX8_MOD_PIXSTRETCH)) return 0;
+    float target = (float)luaL_checknumber(L, 1);
+    float speed  = (float)luaL_optnumber(L, 2, 1.0);
+    cx8_fx_fade(target, speed);
+    return 0;
+}
+
+/* level = fx_get_fade() */
+static int l_fx_get_fade(lua_State *L)
+{
+    lua_pushnumber(L, cx8_fx_get_fade());
+    return 1;
+}
+
+/* fx_shake(amount, duration) */
+static int l_fx_shake(lua_State *L)
+{
+    if (!cx8_module_is_loaded(CX8_MOD_PIXSTRETCH)) return 0;
+    float amt = (float)luaL_checknumber(L, 1);
+    float dur = (float)luaL_optnumber(L, 2, 0.5);
+    cx8_fx_shake(amt, dur);
+    return 0;
+}
+
+/* fx_tint(r, g, b, amount) */
+static int l_fx_tint(lua_State *L)
+{
+    if (!cx8_module_is_loaded(CX8_MOD_PIXSTRETCH)) return 0;
+    float r = (float)luaL_checknumber(L, 1);
+    float g = (float)luaL_checknumber(L, 2);
+    float b = (float)luaL_checknumber(L, 3);
+    float a = (float)luaL_optnumber(L, 4, 0.5);
+    cx8_fx_tint(r, g, b, a);
+    return 0;
+}
+
+/* fx_flash(col, frames) */
+static int l_fx_flash(lua_State *L)
+{
+    if (!cx8_module_is_loaded(CX8_MOD_PIXSTRETCH)) return 0;
+    uint8_t col = CHECKU8(L, 1);
+    int frames  = OPTINT(L, 2, 5);
+    cx8_fx_flash(col, frames);
+    return 0;
+}
+
+/* fx_wave(amplitude, frequency) */
+static int l_fx_wave(lua_State *L)
+{
+    if (!cx8_module_is_loaded(CX8_MOD_PIXSTRETCH)) return 0;
+    float amp  = (float)luaL_checknumber(L, 1);
+    float freq = (float)luaL_optnumber(L, 2, 4.0);
+    cx8_fx_wave(amp, freq);
+    return 0;
+}
+
+/* fx_reset() */
+static int l_fx_reset(lua_State *L)
+{
+    if (!cx8_module_is_loaded(CX8_MOD_PIXSTRETCH)) return 0;
+    cx8_fx_reset();
+    return 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+ *  EXTENDED INPUT API (multi-player + gamepad)
+ * ═══════════════════════════════════════════════════════════════ */
+
+/* pressed = btn_player(player, btn) */
+static int l_btn_player(lua_State *L)
+{
+    int player = CHECKINT(L, 1);
+    int b      = CHECKINT(L, 2);
+    lua_pushboolean(L, cx8_input_btn_player(player, b));
+    return 1;
+}
+
+/* just = btnp_player(player, btn) */
+static int l_btnp_player(lua_State *L)
+{
+    int player = CHECKINT(L, 1);
+    int b      = CHECKINT(L, 2);
+    lua_pushboolean(L, cx8_input_btnp_player(player, b));
+    return 1;
+}
+
+/* count = gamepad_count() */
+static int l_gamepad_count(lua_State *L)
+{
+    lua_pushinteger(L, cx8_input_controller_count());
+    return 1;
+}
+
+/* ok = gamepad_connected(player) */
+static int l_gamepad_connected(lua_State *L)
+{
+    int p = CHECKINT(L, 1);
+    lua_pushboolean(L, cx8_input_has_controller(p));
+    return 1;
+}
+
+/* name = gamepad_name(player) */
+static int l_gamepad_name(lua_State *L)
+{
+    int p = CHECKINT(L, 1);
+    const char *name = cx8_input_controller_name(p);
+    if (name)
+        lua_pushstring(L, name);
+    else
+        lua_pushnil(L);
+    return 1;
+}
+
+/* rumble(player, strength, duration_ms) */
+static int l_rumble(lua_State *L)
+{
+    int player = CHECKINT(L, 1);
+    float str  = (float)luaL_optnumber(L, 2, 0.5);
+    int dur    = OPTINT(L, 3, 200);
+    cx8_input_rumble(player, str, dur);
+    return 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════
  *  SYSTEM CONSTANTS
  * ═══════════════════════════════════════════════════════════════ */
 
@@ -555,6 +837,22 @@ static void register_constants(lua_State *L)
     /* Screen dimensions */
     lua_pushinteger(L, CX8_SCREEN_W); lua_setglobal(L, "SCREEN_W");
     lua_pushinteger(L, CX8_SCREEN_H); lua_setglobal(L, "SCREEN_H");
+
+    /* Network states */
+    lua_pushinteger(L, CX8_NET_DISCONNECTED); lua_setglobal(L, "NET_DISCONNECTED");
+    lua_pushinteger(L, CX8_NET_HOSTING);      lua_setglobal(L, "NET_HOSTING");
+    lua_pushinteger(L, CX8_NET_JOINING);      lua_setglobal(L, "NET_JOINING");
+    lua_pushinteger(L, CX8_NET_CONNECTED);    lua_setglobal(L, "NET_CONNECTED");
+    lua_pushinteger(L, CX8_NET_ERROR);        lua_setglobal(L, "NET_ERROR");
+
+    /* Dither modes */
+    lua_pushinteger(L, CX8_DITHER_NONE);    lua_setglobal(L, "DITHER_NONE");
+    lua_pushinteger(L, CX8_DITHER_BAYER2);  lua_setglobal(L, "DITHER_BAYER2");
+    lua_pushinteger(L, CX8_DITHER_BAYER4);  lua_setglobal(L, "DITHER_BAYER4");
+    lua_pushinteger(L, CX8_DITHER_CHECKER); lua_setglobal(L, "DITHER_CHECKER");
+    lua_pushinteger(L, CX8_DITHER_HLINE);   lua_setglobal(L, "DITHER_HLINE");
+    lua_pushinteger(L, CX8_DITHER_VLINE);   lua_setglobal(L, "DITHER_VLINE");
+    lua_pushinteger(L, CX8_DITHER_DIAG);    lua_setglobal(L, "DITHER_DIAG");
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -622,6 +920,39 @@ static const struct { const char *name; lua_CFunction func; } s_api[] = {
     { "sgn",       l_sgn       },
     { "mid",       l_mid       },
     { "time",      l_time      },
+
+    /* Networking (NETLINK-1) */
+    { "net_host",       l_net_host       },
+    { "net_join",       l_net_join       },
+    { "net_join_ip",    l_net_join_ip    },
+    { "net_disconnect", l_net_disconnect },
+    { "net_send",       l_net_send       },
+    { "net_send_to",    l_net_send_to    },
+    { "net_recv",       l_net_recv       },
+    { "net_state",      l_net_state      },
+    { "net_id",         l_net_id         },
+    { "net_peers",      l_net_peers      },
+    { "net_peer",       l_net_peer       },
+
+    /* Visual FX (PIXEL-STRETCH PRO) */
+    { "fx_cycle",      l_fx_cycle      },
+    { "fx_cycle_stop", l_fx_cycle_stop },
+    { "fx_dither",     l_fx_dither     },
+    { "fx_fade",       l_fx_fade       },
+    { "fx_get_fade",   l_fx_get_fade   },
+    { "fx_shake",      l_fx_shake      },
+    { "fx_tint",       l_fx_tint       },
+    { "fx_flash",      l_fx_flash      },
+    { "fx_wave",       l_fx_wave       },
+    { "fx_reset",      l_fx_reset      },
+
+    /* Extended Input (multi-player + gamepad) */
+    { "btn_player",       l_btn_player       },
+    { "btnp_player",      l_btnp_player      },
+    { "gamepad_count",    l_gamepad_count    },
+    { "gamepad_connected",l_gamepad_connected},
+    { "gamepad_name",     l_gamepad_name     },
+    { "rumble",           l_rumble           },
 
     { NULL, NULL }
 };

@@ -13,6 +13,8 @@
 #include "cx8_memory.h"
 #include "cx8_apu.h"
 #include "cx8_cart.h"
+#include "cx8_netlink.h"
+#include "cx8_pixstretch.h"
 #include <stdio.h>
 
 /* ─── Module registry ──────────────────────────────────────── */
@@ -109,7 +111,7 @@ bool cx8_module_load(int id)
         break;
 
     case CX8_MOD_PIXSTRETCH:
-        /* TODO: enable extended GPU palette cycling & dithering */
+        cx8_fx_enable();
         printf("[CX8-MOD] PIXEL-STRETCH PRO: Advanced FX enabled\n");
         break;
 
@@ -118,8 +120,7 @@ bool cx8_module_load(int id)
         break;
 
     case CX8_MOD_NETLINK:
-        /* TODO: initialise network subsystem */
-        printf("[CX8-MOD] NETLINK-1: Networking standby\n");
+        printf("[CX8-MOD] NETLINK-1: Networking active\n");
         break;
     }
 

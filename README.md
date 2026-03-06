@@ -35,7 +35,7 @@ Unlike PICO-8's strict 128×128 / 16-colour / 32KB limits, Chromaplex 8 gives yo
 | **Cartridge** | 64 KB max, **no token limit** |
 | **Sprites** | 256 × 8×8 sprite slots with hardware scaling & rotation |
 | **Tile Map** | 256×256 tiles |
-| **Input** | 8 buttons: D-Pad + A/B/X/Y |
+| **Input** | 8 buttons: D-Pad + A/B/X/Y (keyboard + gamepads, 4 players) |
 | **Font** | Built-in 4×6 pixel font |
 | **Scripting** | Lua 5.4 (PickUp language support planned) |
 
@@ -198,8 +198,58 @@ pal()                   -- reset all colour remaps
 pressed = btn(BTN_A)     -- is button held?
 just    = btnp(BTN_UP)   -- was button just pressed this frame?
 
+-- Per-player input (for gamepads)
+pressed = btn_player(player, BTN_A)   -- player 0-3
+just    = btnp_player(player, BTN_UP)
+
+-- Gamepad queries
+n = gamepad_count()              -- number of connected controllers
+ok = gamepad_connected(player)   -- is player's controller plugged in?
+name = gamepad_name(player)      -- controller name string
+rumble(player, lo, hi, ms)       -- haptic feedback
+
 -- Constants: BTN_LEFT, BTN_RIGHT, BTN_UP, BTN_DOWN,
 --            BTN_A, BTN_B, BTN_X, BTN_Y
+```
+
+### Networking (NETLINK-1 Module)
+
+```lua
+-- Requires: mod_load(MOD_NETLINK)
+
+net_host(name, [port])           -- host a LAN session
+net_join(name)                   -- discover & join via broadcast
+net_join_ip(name, ip, [port])    -- join a specific host
+net_disconnect()                 -- leave session
+
+net_send(channel, data)          -- send string to all peers
+net_send_to(player, ch, data)    -- send to a specific player
+msg = net_recv()                 -- returns {from, channel, data} or nil
+
+state = net_state()              -- NET_DISCONNECTED / HOSTING / JOINING / CONNECTED / ERROR
+id = net_id()                    -- my player ID (0 = host)
+n = net_peers()                  -- number of connected peers
+info = net_peer(id)              -- returns {id, name, active}
+```
+
+### Visual FX (PIXEL-STRETCH PRO Module)
+
+```lua
+-- Requires: mod_load(MOD_PIXSTRETCH)
+
+fx_cycle(start, len, speed)      -- palette cycling (auto-rotate colours)
+fx_cycle_stop(slot)              -- stop a cycle slot
+fx_dither(mode)                  -- ordered dithering pattern
+  -- DITHER_NONE, DITHER_BAYER2, DITHER_BAYER4,
+  -- DITHER_CHECKER, DITHER_HLINE, DITHER_VLINE, DITHER_DIAG
+
+fx_fade(target, speed)           -- fade screen (0.0 = black, 1.0 = full)
+val = fx_get_fade()              -- current fade value
+fx_shake(intensity, duration)    -- screen shake
+fx_tint(r, g, b, amount)        -- colour tint (0-255, 0.0-1.0)
+fx_flash(col, duration)          -- flash screen with palette colour
+fx_wave(amplitude, freq, speed)  -- scanline wave distortion
+fx_reset()                       -- clear all effects
 ```
 
 ### Audio
@@ -313,36 +363,49 @@ Colour 0 is transparent for sprites.
 
 ```
 Chromaplex 8/
-├── CMakeLists.txt           Build system
+├── build.bat                Build script (GCC / w64devkit)
 ├── README.md                This file
 ├── src/
 │   ├── cx8.h                Hardware spec & types
 │   ├── cx8_gpu.h/c          PRISM-64 graphics engine
 │   ├── cx8_apu.h/c          WAVE-4 audio engine
-│   ├── cx8_input.h/c        Input subsystem
+│   ├── cx8_input.h/c        Input & gamepad subsystem (4 players)
 │   ├── cx8_memory.h/c       RAM management
 │   ├── cx8_cart.h/c          Cartridge loader
 │   ├── cx8_modules.h/c      Expansion module system
-│   ├── cx8_scripting.h/c    Lua bridge
+│   ├── cx8_scripting.h/c    Lua bridge (full API)
 │   ├── cx8_font.h/c         Embedded pixel font
-│   └── main.c               Entry point & boot screen
-└── carts/
-    ├── hello.lua            Feature demo
-    ├── bounce.lua           Bouncing ball
-    └── modules.lua          Module bay demo
+│   ├── cx8_netlink.h/c      NETLINK-1 LAN networking (UDP)
+│   ├── cx8_pixstretch.h/c   PIXEL-STRETCH PRO visual FX
+│   ├── cx8_home.h/c         Home screen & menu
+│   ├── cx8_editor.h/c       Editor framework
+│   ├── cx8_ed_code.h/c      Code editor
+│   ├── cx8_ed_sprite.h/c    Sprite editor
+│   ├── cx8_ed_map.h/c       Map editor
+│   ├── cx8_ed_sfx.h/c       SFX editor
+│   └── main.c               Entry point, state machine & boot
+├── carts/
+│   ├── hello.lua            Feature demo
+│   ├── bounce.lua           Bouncing ball
+│   ├── modules.lua          Module bay demo
+│   ├── netlink.lua          LAN multiplayer demo
+│   ├── pixstretch.lua       Visual FX showcase
+│   └── gamepad.lua          Controller test utility
+└── docs/
+    └── index.html           Full HTML documentation
 ```
 
 ---
 
 ## Roadmap
 
-- [ ] Built-in sprite/map/SFX editors
+- [x] Built-in sprite/map/SFX editors
 - [ ] PickUp language scripting support
-- [ ] PIXEL-STRETCH PRO palette cycling & dithering
-- [ ] NETLINK-1 multiplayer networking
+- [x] PIXEL-STRETCH PRO palette cycling & dithering
+- [x] NETLINK-1 multiplayer networking
 - [ ] `.cx8` cartridge binary format with compression
 - [ ] Cartridge sharing / community hub
-- [ ] Gamepad / controller support
+- [x] Gamepad / controller support
 - [ ] CRT shader / scanline post-processing
 
 ---
