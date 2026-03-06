@@ -16,6 +16,8 @@
 
 *"Plug in. Power up. Play."*
 
+![Title Screen](screenshots/titlescreen.png)
+
 ---
 
 ## What Is It?
@@ -23,6 +25,8 @@
 Chromaplex 8 is a **fantasy game console** — a virtual machine with carefully chosen constraints designed to make creating retro-style games fast and fun. Think PICO-8, but with a wider screen, more colours, and hardware mod slots.
 
 Unlike PICO-8's strict 128×128 / 16-colour / 32KB limits, Chromaplex 8 gives you breathing room while keeping the cozy, creative constraints that make fantasy consoles special.
+
+![Home Screen](screenshots/homescreen.png)
 
 ## Hardware Specifications
 
@@ -56,6 +60,8 @@ Unlike PICO-8's strict 128×128 / 16-colour / 32KB limits, Chromaplex 8 gives yo
 ## Expansion Modules
 
 The Chromaplex 8 module bay accepts up to 8 virtual expansion modules — each with their own manufacturer, personality, and aesthetic. Plug them in from the command line:
+
+![Expansion Module Bay](screenshots/expansion-module-bay.png)
 
 ```
 chromaplex8 --mod 0 --mod 1 carts/hello.lua
@@ -141,6 +147,8 @@ cmake --build build
 
 ### Drawing
 
+![Shapes](screenshots/Shapes.png)
+
 ```lua
 cls([col])                              -- clear screen
 pset(x, y, col)                         -- set pixel
@@ -156,6 +164,8 @@ print(str, [x, y, col])               -- draw text
 ```
 
 ### Sprites (Hardware Scaling & Rotation!)
+
+![Sprites](screenshots/sprites.png)
 
 ```lua
 spr(n, x, y, [w, h, flip_x, flip_y, scale, angle])
@@ -214,6 +224,8 @@ rumble(player, lo, hi, ms)       -- haptic feedback
 
 ### Networking (NETLINK-1 Module)
 
+![NETLINK-1 Multiplayer](screenshots/netlink-1.png)
+
 ```lua
 -- Requires: mod_load(MOD_NETLINK)
 
@@ -253,6 +265,8 @@ fx_reset()                       -- clear all effects
 ```
 
 ### Audio
+
+![Audio](screenshots/audio.png)
 
 ```lua
 sfx(channel, freq, [vol, waveform, duty])
@@ -312,6 +326,24 @@ function _init()      -- called once at startup
 function _update()    -- called every frame (60 FPS)
 function _draw()      -- called every frame for rendering
 ```
+
+---
+
+## Built-in Editors
+
+Chromaplex 8 includes a full suite of built-in editors for creating games without leaving the console.
+
+### Code Editor
+
+![Code Editor](screenshots/code-editor.png)
+
+### Sprite Editor
+
+![Sprite Editor](screenshots/sprite-editor.png)
+
+### Sound Editor
+
+![Sound Editor](screenshots/sound-editor.png)
 
 ---
 
