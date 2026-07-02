@@ -65,6 +65,7 @@ void     cx8_gpu_set_color(uint8_t idx, cx8_color_t col);
 
 /* ─── Text ─────────────────────────────────────────────────── */
 int      cx8_gpu_print(const char *str, int x, int y, uint8_t color);
+int      cx8_gpu_text_width(const char *str);  /* measure without drawing */
 
 /* ─── Direct access ────────────────────────────────────────── */
 uint8_t     *cx8_gpu_get_vram(void);

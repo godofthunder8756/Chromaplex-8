@@ -25,6 +25,16 @@ set(CX8_SOURCES
     src/cx8_cart.c
     src/cx8_modules.c
     src/cx8_scripting.c
+    src/cx8_home.c
+    src/cx8_editor.c
+    src/cx8_ed_code.c
+    src/cx8_ed_sprite.c
+    src/cx8_ed_map.c
+    src/cx8_ed_sfx.c
+    src/cx8_netlink.c
+    src/cx8_pixstretch.c
+    src/cx8_persist.c
+    src/cx8_music.c
 )
 
 # ─── Executable ────────────────────────────────────────────────
@@ -44,6 +54,11 @@ target_link_libraries(chromaplex8 PRIVATE
 # Math library on Unix
 if(UNIX)
     target_link_libraries(chromaplex8 PRIVATE m)
+endif()
+
+# Winsock for networking on Windows
+if(WIN32)
+    target_link_libraries(chromaplex8 PRIVATE ws2_32)
 endif()
 
 # ─── Install ───────────────────────────────────────────────────

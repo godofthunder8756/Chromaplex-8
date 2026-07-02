@@ -161,7 +161,14 @@ static bool validate_packet(const uint8_t *buf, int len, uint8_t *type_out)
 {
     if (len < NET_HDR_LEN) return false;
     if (memcmp(buf, NET_MAGIC, NET_MAGIC_LEN) != 0) return false;
-    *type_out = buf[NET_MAGIC_LEN];
+    uint8_t type = buf[NET_MAGIC_LEN];
+    /* Validate message type is in known range */
+    if (type < MSG_DISCOVER || type > MSG_DISCONNECT) return false;
+    /* DATA messages must have at least 1 byte of payload (channel byte) */
+    if (type == MSG_DATA && len <= NET_HDR_LEN) return false;
+    /* JOIN_ACCEPT must carry a player_id byte */
+    if (type == MSG_JOIN_ACCEPT && len < NET_HDR_LEN + 1) return false;
+    *type_out = type;
     return true;
 }
 

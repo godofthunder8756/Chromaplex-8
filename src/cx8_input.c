@@ -8,6 +8,7 @@
 
 #include "cx8_input.h"
 #include <stdio.h>
+#include <string.h>
 
 /* ─── Per-player state ─────────────────────────────────────── */
 typedef struct {
@@ -20,6 +21,14 @@ static cx8_player_input_t s_players[CX8_MAX_CONTROLLERS];
 /* For backwards compatibility, player 0 aliases */
 #define s_current   s_players[0].current
 #define s_previous  s_players[0].previous
+
+/* ─── Mouse state ──────────────────────────────────────────── */
+#define CX8_MOUSE_BUTTONS 3
+
+static int  s_mouse_x = 0;
+static int  s_mouse_y = 0;
+static bool s_mouse_current[CX8_MOUSE_BUTTONS]  = {0};
+static bool s_mouse_previous[CX8_MOUSE_BUTTONS] = {0};
 
 /* ─── Controller tracking ─────────────────────────────────── */
 typedef struct {
@@ -80,6 +89,7 @@ void cx8_input_begin_frame(void)
     for (int p = 0; p < CX8_MAX_CONTROLLERS; p++)
         memcpy(s_players[p].previous, s_players[p].current,
                sizeof(s_players[p].current));
+    memcpy(s_mouse_previous, s_mouse_current, sizeof(s_mouse_current));
 }
 
 /* ─── Button state (player 0 / backwards compatible) ──────── */
@@ -119,6 +129,52 @@ bool cx8_input_btnp_player(int player, int btn)
     if (player >= 0 && player < CX8_MAX_CONTROLLERS &&
         btn >= 0 && btn < CX8_BTN_COUNT)
         return s_players[player].current[btn] && !s_players[player].previous[btn];
+    return false;
+}
+
+/* ─── Button released (falling edge) ──────────────────────── */
+
+bool cx8_input_btnr(int btn)
+{
+    return cx8_input_btnr_player(0, btn);
+}
+
+bool cx8_input_btnr_player(int player, int btn)
+{
+    if (player >= 0 && player < CX8_MAX_CONTROLLERS &&
+        btn >= 0 && btn < CX8_BTN_COUNT)
+        return !s_players[player].current[btn] && s_players[player].previous[btn];
+    return false;
+}
+
+/* ─── Mouse functions ──────────────────────────────────────── */
+
+void cx8_input_mouse_move(int x, int y)
+{
+    s_mouse_x = x;
+    s_mouse_y = y;
+}
+
+void cx8_input_mouse_button(int button, bool pressed)
+{
+    if (button >= 0 && button < CX8_MOUSE_BUTTONS)
+        s_mouse_current[button] = pressed;
+}
+
+int cx8_input_mouse_x(void) { return s_mouse_x; }
+int cx8_input_mouse_y(void) { return s_mouse_y; }
+
+bool cx8_input_mouse_btn(int button)
+{
+    if (button >= 0 && button < CX8_MOUSE_BUTTONS)
+        return s_mouse_current[button];
+    return false;
+}
+
+bool cx8_input_mouse_btnp(int button)
+{
+    if (button >= 0 && button < CX8_MOUSE_BUTTONS)
+        return s_mouse_current[button] && !s_mouse_previous[button];
     return false;
 }
 

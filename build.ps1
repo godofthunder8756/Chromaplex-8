@@ -103,7 +103,7 @@ $sources = Get-ChildItem -Path $Src -Filter "*.c" | ForEach-Object { $_.FullName
     @sources `
     "-L$SDL2Dir\lib" `
     "-L$LuaDir\src" `
-    -lmingw32 -lSDL2main -lSDL2 -llua -lm `
+    -lmingw32 -lSDL2main -lSDL2 -llua -lm -lws2_32 `
     -o (Join-Path $Build "chromaplex8.exe")
 
 if ($LASTEXITCODE -ne 0) {

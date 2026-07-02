@@ -13,6 +13,8 @@
 #include "cx8_modules.h"
 #include "cx8_netlink.h"
 #include "cx8_pixstretch.h"
+#include "cx8_persist.h"
+#include "cx8_music.h"
 #include <lua.h>
 #include <lauxlib.h>
 #include <lualib.h>
@@ -38,6 +40,14 @@
 #define CHECKSIZE(L, n)  ((size_t)luaL_checknumber(L, n))
 
 static clock_t s_start_time;
+
+/* ─── Runtime error state ──────────────────────────────────── */
+static char s_error_msg[512] = "";
+static bool s_has_error = false;
+
+bool cx8_script_has_error(void) { return s_has_error; }
+const char *cx8_script_get_error(void) { return s_error_msg; }
+void cx8_script_clear_error(void) { s_has_error = false; s_error_msg[0] = '\0'; }
 
 /* ═══════════════════════════════════════════════════════════════
  *  DRAWING API
@@ -804,6 +814,178 @@ static int l_rumble(lua_State *L)
 }
 
 /* ═══════════════════════════════════════════════════════════════
+ *  BUTTON RELEASED API
+ * ═══════════════════════════════════════════════════════════════ */
+
+/* released = btnr(b) */
+static int l_btnr(lua_State *L)
+{
+    int b = CHECKINT(L, 1);
+    lua_pushboolean(L, cx8_input_btnr(b));
+    return 1;
+}
+
+/* released = btnr_player(player, b) */
+static int l_btnr_player(lua_State *L)
+{
+    int player = CHECKINT(L, 1);
+    int b      = CHECKINT(L, 2);
+    lua_pushboolean(L, cx8_input_btnr_player(player, b));
+    return 1;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+ *  MOUSE API
+ * ═══════════════════════════════════════════════════════════════ */
+
+/* x, y, btn = mouse() */
+static int l_mouse(lua_State *L)
+{
+    lua_pushinteger(L, cx8_input_mouse_x());
+    lua_pushinteger(L, cx8_input_mouse_y());
+    /* Return bitmask of held buttons */
+    int mask = 0;
+    if (cx8_input_mouse_btn(0)) mask |= 1;
+    if (cx8_input_mouse_btn(1)) mask |= 2;
+    if (cx8_input_mouse_btn(2)) mask |= 4;
+    lua_pushinteger(L, mask);
+    return 3;
+}
+
+/* pressed = mclick([button]) */
+static int l_mclick(lua_State *L)
+{
+    int b = OPTINT(L, 1, 0);
+    lua_pushboolean(L, cx8_input_mouse_btnp(b));
+    return 1;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+ *  PERSISTENT STORAGE API
+ * ═══════════════════════════════════════════════════════════════ */
+
+/* dset(slot, value) */
+static int l_dset(lua_State *L)
+{
+    int slot = CHECKINT(L, 1);
+    double val = luaL_checknumber(L, 2);
+    cx8_persist_set(slot, val);
+    return 0;
+}
+
+/* value = dget(slot) */
+static int l_dget(lua_State *L)
+{
+    int slot = CHECKINT(L, 1);
+    lua_pushnumber(L, cx8_persist_get(slot));
+    return 1;
+}
+
+/* dsave() — flush save data to disk */
+static int l_dsave(lua_State *L)
+{
+    (void)L;
+    lua_pushboolean(L, cx8_persist_flush());
+    return 1;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+ *  MUSIC SEQUENCER API
+ * ═══════════════════════════════════════════════════════════════ */
+
+/* music_play([order]) */
+static int l_music_play(lua_State *L)
+{
+    int order = OPTINT(L, 1, 0);
+    cx8_music_play(order);
+    return 0;
+}
+
+/* music_stop() */
+static int l_music_stop(lua_State *L)
+{
+    (void)L;
+    cx8_music_stop();
+    return 0;
+}
+
+/* music_pause() */
+static int l_music_pause(lua_State *L)
+{
+    (void)L;
+    cx8_music_pause();
+    return 0;
+}
+
+/* music_resume() */
+static int l_music_resume(lua_State *L)
+{
+    (void)L;
+    cx8_music_resume();
+    return 0;
+}
+
+/* music_bpm(bpm) or bpm = music_bpm() */
+static int l_music_bpm(lua_State *L)
+{
+    if (lua_gettop(L) == 0) {
+        lua_pushinteger(L, cx8_music_get_bpm());
+        return 1;
+    }
+    cx8_music_set_bpm(CHECKINT(L, 1));
+    return 0;
+}
+
+/* music_note(pattern, row, channel, note, [waveform, volume]) */
+static int l_music_note(lua_State *L)
+{
+    int pat  = CHECKINT(L, 1);
+    int row  = CHECKINT(L, 2);
+    int ch   = CHECKINT(L, 3);
+    uint8_t note = CHECKU8(L, 4);
+    uint8_t wave = OPTU8(L, 5, CX8_WAVE_SQUARE);
+    uint8_t vol  = OPTU8(L, 6, 200);
+    cx8_music_set_note(pat, row, ch, note, wave, vol);
+    return 0;
+}
+
+/* music_order({0, 1, 2, ...}) — set pattern order from a Lua table */
+static int l_music_order(lua_State *L)
+{
+    luaL_checktype(L, 1, LUA_TTABLE);
+    int len = (int)lua_rawlen(L, 1);
+    if (len > CX8_MUSIC_MAX_ORDER) len = CX8_MUSIC_MAX_ORDER;
+
+    int order[CX8_MUSIC_MAX_ORDER];
+    for (int i = 0; i < len; i++) {
+        lua_rawgeti(L, 1, i + 1);
+        order[i] = (int)lua_tointeger(L, -1);
+        lua_pop(L, 1);
+    }
+    cx8_music_set_order(order, len);
+    return 0;
+}
+
+/* playing = music_playing() */
+static int l_music_playing(lua_State *L)
+{
+    lua_pushboolean(L, cx8_music_is_playing());
+    return 1;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+ *  TEXT MEASUREMENT API
+ * ═══════════════════════════════════════════════════════════════ */
+
+/* w = text_width(str) — measure string width in pixels without drawing */
+static int l_text_width(lua_State *L)
+{
+    const char *str = luaL_checkstring(L, 1);
+    lua_pushinteger(L, cx8_gpu_text_width(str));
+    return 1;
+}
+
+/* ═══════════════════════════════════════════════════════════════
  *  SYSTEM CONSTANTS
  * ═══════════════════════════════════════════════════════════════ */
 
@@ -949,10 +1131,34 @@ static const struct { const char *name; lua_CFunction func; } s_api[] = {
     /* Extended Input (multi-player + gamepad) */
     { "btn_player",       l_btn_player       },
     { "btnp_player",      l_btnp_player      },
+    { "btnr",             l_btnr             },
+    { "btnr_player",      l_btnr_player      },
     { "gamepad_count",    l_gamepad_count    },
     { "gamepad_connected",l_gamepad_connected},
     { "gamepad_name",     l_gamepad_name     },
     { "rumble",           l_rumble           },
+
+    /* Mouse */
+    { "mouse",            l_mouse            },
+    { "mclick",           l_mclick           },
+
+    /* Persistent Storage */
+    { "dset",             l_dset             },
+    { "dget",             l_dget             },
+    { "dsave",            l_dsave            },
+
+    /* Music Sequencer */
+    { "music_play",       l_music_play       },
+    { "music_stop",       l_music_stop       },
+    { "music_pause",      l_music_pause      },
+    { "music_resume",     l_music_resume     },
+    { "music_bpm",        l_music_bpm        },
+    { "music_note",       l_music_note       },
+    { "music_order",      l_music_order      },
+    { "music_playing",    l_music_playing    },
+
+    /* Text measurement */
+    { "text_width",       l_text_width       },
 
     { NULL, NULL }
 };
@@ -1013,8 +1219,11 @@ static void safe_call(lua_State *L, const char *func_name)
     lua_getglobal(L, func_name);
     if (lua_isfunction(L, -1)) {
         if (lua_pcall(L, 0, 0, 0) != LUA_OK) {
-            fprintf(stderr, "[CX8-LUA] %s() error: %s\n",
-                    func_name, lua_tostring(L, -1));
+            const char *err = lua_tostring(L, -1);
+            fprintf(stderr, "[CX8-LUA] %s() error: %s\n", func_name, err);
+            /* Store error for on-screen display */
+            snprintf(s_error_msg, sizeof(s_error_msg), "%s", err ? err : "unknown error");
+            s_has_error = true;
             lua_pop(L, 1);
         }
     } else {

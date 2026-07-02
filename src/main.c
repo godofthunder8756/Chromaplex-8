@@ -35,6 +35,8 @@
 #include "cx8_editor.h"
 #include "cx8_netlink.h"
 #include "cx8_pixstretch.h"
+#include "cx8_persist.h"
+#include "cx8_music.h"
 
 /* ─── Application states ───────────────────────────────────── */
 
@@ -65,6 +67,62 @@ static lua_State   *g_lua = NULL;
 
 /* Boot screen frame counter */
 static int g_boot_frame = 0;
+
+/* Fullscreen state */
+static bool g_fullscreen = false;
+
+/* ─── Fullscreen toggle ────────────────────────────────────── */
+
+static void toggle_fullscreen(void)
+{
+    g_fullscreen = !g_fullscreen;
+    SDL_SetWindowFullscreen(g_window,
+        g_fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
+}
+
+/* ─── On-screen error display (Lua crash screen) ──────────── */
+
+static void draw_error_screen(void)
+{
+    cx8_gpu_cls(1);  /* dark blue background */
+
+    /* Red banner */
+    cx8_gpu_rectfill(0, 0, CX8_SCREEN_W - 1, 9, 8);
+    cx8_gpu_print("RUNTIME ERROR", 4, 2, 7);
+
+    /* Error message — word-wrap at screen width */
+    const char *msg = cx8_script_get_error();
+    if (!msg) msg = "unknown error";
+
+    int y = 16;
+    int x = 4;
+    int max_w = CX8_SCREEN_W - 8;
+    int char_w = CX8_GLYPH_W + 1;
+    int chars_per_line = max_w / char_w;
+
+    while (*msg && y < CX8_SCREEN_H - 16) {
+        char line[64];
+        int len = (int)strlen(msg);
+        if (len > chars_per_line) len = chars_per_line;
+
+        /* Try to break at a space */
+        if ((int)strlen(msg) > chars_per_line) {
+            int brk = len;
+            while (brk > 0 && msg[brk] != ' ') brk--;
+            if (brk > 0) len = brk;
+        }
+
+        memcpy(line, msg, (size_t)len);
+        line[len] = '\0';
+        cx8_gpu_print(line, x, y, 7);
+        y += CX8_GLYPH_H + 2;
+        msg += len;
+        while (*msg == ' ') msg++;
+    }
+
+    /* Instructions */
+    cx8_gpu_print("PRESS ESC TO RETURN HOME", 4, CX8_SCREEN_H - 10, 5);
+}
 
 /* ─── SDL Initialization ──────────────────────────────────── */
 
@@ -240,6 +298,10 @@ static bool load_and_run_cart(const char *path)
 
     cx8_script_call_init(g_lua);
     printf("[CX8] Running cartridge: %s\n", path);
+
+    /* Init persistent storage for this cart */
+    cx8_persist_init(path);
+
     return true;
 }
 
@@ -432,6 +494,7 @@ int main(int argc, char *argv[])
     cx8_modules_init();
     cx8_fx_init();
     cx8_net_init();
+    cx8_music_init();
 
     /* Load requested modules */
     for (int i = 0; i < mod_count; i++)
@@ -480,9 +543,31 @@ int main(int argc, char *argv[])
             /* Handle controller events */
             cx8_input_handle_controller_event(&e);
 
+            /* Handle mouse events (convert to virtual screen coords) */
+            if (e.type == SDL_MOUSEMOTION) {
+                float lx, ly;
+                SDL_RenderWindowToLogical(g_renderer, e.motion.x, e.motion.y, &lx, &ly);
+                cx8_input_mouse_move((int)lx, (int)ly);
+            }
+            else if (e.type == SDL_MOUSEBUTTONDOWN || e.type == SDL_MOUSEBUTTONUP) {
+                bool pressed = (e.type == SDL_MOUSEBUTTONDOWN);
+                int btn = 0;
+                if (e.button.button == SDL_BUTTON_LEFT)   btn = 0;
+                if (e.button.button == SDL_BUTTON_RIGHT)  btn = 1;
+                if (e.button.button == SDL_BUTTON_MIDDLE) btn = 2;
+                cx8_input_mouse_button(btn, pressed);
+            }
+
             /* Map keys to input system (for HOME and RUNNING) */
-            if (e.type == SDL_KEYDOWN)
+            if (e.type == SDL_KEYDOWN) {
+                /* F11 or Alt+Enter: toggle fullscreen */
+                if (e.key.keysym.sym == SDLK_F11 ||
+                    (e.key.keysym.sym == SDLK_RETURN &&
+                     (e.key.keysym.mod & KMOD_ALT))) {
+                    toggle_fullscreen();
+                }
                 handle_game_key(e.key.keysym.sym, true);
+            }
             else if (e.type == SDL_KEYUP)
                 handle_game_key(e.key.keysym.sym, false);
         }
@@ -638,12 +723,22 @@ int main(int argc, char *argv[])
                     printf("[CX8] Returning to home screen.\n");
                     if (g_lua) { cx8_script_shutdown(g_lua); g_lua = NULL; }
                     cx8_apu_stop_all();
+                    cx8_music_stop();
+                    cx8_persist_shutdown();
+                    cx8_script_clear_error();
                     cx8_home_init(g_carts_dir);
                     g_state = STATE_HOME;
                     break;
                 }
             }
             if (g_state != STATE_RUNNING) break;
+
+            /* Check for runtime error — show error screen */
+            if (cx8_script_has_error()) {
+                draw_error_screen();
+                present_frame();
+                break;
+            }
 
             /* Update & draw */
             if (g_lua) {
@@ -653,6 +748,7 @@ int main(int argc, char *argv[])
 
             /* Update subsystems */
             cx8_net_update();
+            cx8_music_update();
             cx8_fx_update(1.0f / CX8_FPS);
 
             present_frame();
@@ -743,6 +839,8 @@ int main(int argc, char *argv[])
     SDL_StopTextInput();
     if (g_lua) { cx8_script_shutdown(g_lua); g_lua = NULL; }
     if (g_cart_loaded) { cx8_cart_free(&g_cart); g_cart_loaded = false; }
+    cx8_persist_shutdown();
+    cx8_music_shutdown();
     cx8_apu_shutdown();
     cx8_gpu_shutdown();
     cx8_net_shutdown();

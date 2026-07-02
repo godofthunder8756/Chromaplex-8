@@ -39,6 +39,22 @@ bool cx8_input_btn_player(int player, int btn);
 bool cx8_input_btnp(int btn);
 bool cx8_input_btnp_player(int player, int btn);
 
+/* Query just-released (falling edge) this frame */
+bool cx8_input_btnr(int btn);
+bool cx8_input_btnr_player(int player, int btn);
+
+/* ─── Mouse support ────────────────────────────────────────── */
+
+/* Update mouse state (called from SDL event processing) */
+void cx8_input_mouse_move(int x, int y);
+void cx8_input_mouse_button(int button, bool pressed);
+
+/* Query mouse state (coordinates are in virtual screen space) */
+int  cx8_input_mouse_x(void);
+int  cx8_input_mouse_y(void);
+bool cx8_input_mouse_btn(int button);   /* 0=left, 1=right, 2=middle */
+bool cx8_input_mouse_btnp(int button);  /* just pressed this frame */
+
 /* ─── Gamepad management ───────────────────────────────────── */
 
 /* Handle SDL controller events (connect/disconnect/button/axis) */

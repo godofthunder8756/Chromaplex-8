@@ -494,6 +494,24 @@ int cx8_gpu_print(const char *str, int x, int y, uint8_t color)
     return cx_pos - x + ox;  /* return cursor x advance */
 }
 
+int cx8_gpu_text_width(const char *str)
+{
+    if (!str) return 0;
+    int w = 0;
+    int max_w = 0;
+    while (*str) {
+        if (*str == '\n') {
+            if (w > max_w) max_w = w;
+            w = 0;
+        } else {
+            w += CX8_GLYPH_W + 1;
+        }
+        str++;
+    }
+    if (w > max_w) max_w = w;
+    return max_w;
+}
+
 /* ─── Direct access ────────────────────────────────────────── */
 
 uint8_t *cx8_gpu_get_vram(void)
