@@ -18,6 +18,7 @@
 #include <windows.h>
 #else
 #include <dirent.h>
+#include <sys/stat.h>
 #endif
 
 /* ─── State ────────────────────────────────────────────────── */
@@ -122,12 +123,16 @@ static void scan_directory(const char *dir)
     if (!d) return;
     struct dirent *ent;
     while ((ent = readdir(d)) != NULL && s_count < CX8_HOME_MAX_CARTS) {
-        if (ent->d_type == DT_DIR) continue;
+        char full_path[CX8_HOME_PATH_LEN];
+        struct stat st;
+
+        snprintf(full_path, sizeof(full_path), "%s/%s", dir, ent->d_name);
+        if (stat(full_path, &st) != 0 || S_ISDIR(st.st_mode)) continue;
         if (!ends_with(ent->d_name, ".lua") && !ends_with(ent->d_name, ".cx8")) continue;
 
         cx8_home_entry_t *e = &s_entries[s_count];
         memset(e, 0, sizeof(*e));
-        snprintf(e->path, sizeof(e->path), "%s/%s", dir, ent->d_name);
+        snprintf(e->path, sizeof(e->path), "%s", full_path);
         strncpy(e->name, ent->d_name, CX8_HOME_NAME_LEN - 1);
         char *dot = strrchr(e->name, '.');
         if (dot) *dot = '\0';
