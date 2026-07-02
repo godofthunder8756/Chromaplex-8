@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\aahern\Documents\Chromaplex 8\build\CMakeFiles\901acd9abb82b883ce3113d7e9f72a66\INSTALL_force.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{898A7DA1-EF26-3FC1-9089-E49F364A2050}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

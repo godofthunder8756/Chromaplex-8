@@ -1,0 +1,109 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\aahern\Documents\Chromaplex 8\deps\lua-5.4.7\src\lapi.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aahern\Documents\Chromaplex 8\deps\lua-5.4.7\src\lauxlib.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aahern\Documents\Chromaplex 8\deps\lua-5.4.7\src\lbaselib.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aahern\Documents\Chromaplex 8\deps\lua-5.4.7\src\lcode.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aahern\Documents\Chromaplex 8\deps\lua-5.4.7\src\lcorolib.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aahern\Documents\Chromaplex 8\deps\lua-5.4.7\src\lctype.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aahern\Documents\Chromaplex 8\deps\lua-5.4.7\src\ldblib.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aahern\Documents\Chromaplex 8\deps\lua-5.4.7\src\ldebug.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aahern\Documents\Chromaplex 8\deps\lua-5.4.7\src\ldo.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aahern\Documents\Chromaplex 8\deps\lua-5.4.7\src\ldump.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aahern\Documents\Chromaplex 8\deps\lua-5.4.7\src\lfunc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aahern\Documents\Chromaplex 8\deps\lua-5.4.7\src\lgc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aahern\Documents\Chromaplex 8\deps\lua-5.4.7\src\linit.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aahern\Documents\Chromaplex 8\deps\lua-5.4.7\src\liolib.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aahern\Documents\Chromaplex 8\deps\lua-5.4.7\src\llex.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aahern\Documents\Chromaplex 8\deps\lua-5.4.7\src\lmathlib.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aahern\Documents\Chromaplex 8\deps\lua-5.4.7\src\lmem.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aahern\Documents\Chromaplex 8\deps\lua-5.4.7\src\loadlib.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aahern\Documents\Chromaplex 8\deps\lua-5.4.7\src\lobject.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aahern\Documents\Chromaplex 8\deps\lua-5.4.7\src\lopcodes.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aahern\Documents\Chromaplex 8\deps\lua-5.4.7\src\loslib.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aahern\Documents\Chromaplex 8\deps\lua-5.4.7\src\lparser.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aahern\Documents\Chromaplex 8\deps\lua-5.4.7\src\lstate.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aahern\Documents\Chromaplex 8\deps\lua-5.4.7\src\lstring.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aahern\Documents\Chromaplex 8\deps\lua-5.4.7\src\lstrlib.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aahern\Documents\Chromaplex 8\deps\lua-5.4.7\src\ltable.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aahern\Documents\Chromaplex 8\deps\lua-5.4.7\src\ltablib.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aahern\Documents\Chromaplex 8\deps\lua-5.4.7\src\ltm.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aahern\Documents\Chromaplex 8\deps\lua-5.4.7\src\lundump.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aahern\Documents\Chromaplex 8\deps\lua-5.4.7\src\lutf8lib.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aahern\Documents\Chromaplex 8\deps\lua-5.4.7\src\lvm.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\aahern\Documents\Chromaplex 8\deps\lua-5.4.7\src\lzio.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\aahern\Documents\Chromaplex 8\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{93CA772C-D0B3-3880-A946-2AEA2865E64C}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

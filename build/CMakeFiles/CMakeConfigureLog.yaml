@@ -8,10 +8,6 @@ events:
       - "CMakeLists.txt:2 (project)"
     message: |
       The system is: Windows - 10.0.22631 - AMD64
-...
-
----
-events:
   -
     kind: "find-v1"
     backtrace:
@@ -60,8 +56,6 @@ events:
         - "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\"
         - "C:\\Windows\\System32\\OpenSSH\\"
         - "C:\\Windows\\system32\\config\\systemprofile\\AppData\\Local\\Microsoft\\WindowsApps"
-        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\x32"
-        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\x64"
         - "C:\\Windows\\CCM"
         - "C:\\Program Files\\Microsoft SQL Server\\150\\Tools\\Binn\\"
         - "C:\\Program Files\\Microsoft SQL Server\\Client SDK\\ODBC\\170\\Tools\\Binn\\"
@@ -73,8 +67,26 @@ events:
         - "C:\\WINDOWS\\System32\\Wbem"
         - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
         - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit\\"
+        - "C:\\WINDOWS\\system32\\config\\systemprofile\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\x86"
+        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\amd64"
+        - "C:\\Program Files\\WinDirStat\\"
         - "C:\\Users\\aahern\\AppData\\Local\\Programs\\Python\\Python313\\Scripts\\"
         - "C:\\Users\\aahern\\AppData\\Local\\Programs\\Python\\Python313\\"
+        - "C:\\Windows\\system32"
+        - "C:\\Windows"
+        - "C:\\Windows\\System32\\Wbem"
+        - "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\Windows\\System32\\OpenSSH\\"
+        - "C:\\Windows\\system32\\config\\systemprofile\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\x32"
+        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\x64"
+        - "C:\\Windows\\CCM"
+        - "C:\\Program Files\\Microsoft SQL Server\\150\\Tools\\Binn\\"
+        - "C:\\Program Files\\Microsoft SQL Server\\Client SDK\\ODBC\\170\\Tools\\Binn\\"
+        - "C:\\Program Files\\dotnet\\"
         - "C:\\Users\\aahern\\AppData\\Local\\Microsoft\\WindowsApps"
         - "C:\\Users\\aahern\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
         - "C:\\Users\\aahern\\.dotnet\\tools"
@@ -85,6 +97,9 @@ events:
         - "C:\\Users\\aahern\\AppData\\Local\\GitHubDesktop\\bin"
         - "C:\\Users\\aahern\\AppData\\Local\\Microsoft\\WindowsApps"
         - "C:\\Users\\aahern\\.lmstudio\\bin"
+        - "C:\\Users\\aahern\\.dotnet\\tools"
+        - "C:\\Users\\aahern\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\aahern\\AppData\\Local\\Microsoft\\WinGet\\Packages\\GitHub.Copilot_Microsoft.Winget.Source_8wekyb3d8bbwe"
         - "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin"
         - "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\Ninja"
         - "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\VC\\Linux\\bin\\ConnectionManagerExe"
@@ -115,7 +130,7 @@ events:
       The output was:
       0
       MSBuild version 17.14.40+3e7442088 for .NET Framework
-      Build started 3/4/2026 4:30:54 PM.
+      Build started 7/2/2026 2:39:35 PM.
       
       Project "C:\\Users\\aahern\\Documents\\Chromaplex 8\\build\\CMakeFiles\\4.2.3\\CompilerIdC\\CompilerIdC.vcxproj" on node 1 (default targets).
       PrepareForBuild:
@@ -144,7 +159,7 @@ events:
           0 Warning(s)
           0 Error(s)
       
-      Time Elapsed 00:00:11.32
+      Time Elapsed 00:00:04.28
       
       
       Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CompilerIdC.exe"
@@ -197,16 +212,21 @@ events:
       - "C:/Windows/System32/WindowsPowerShell/v1.0/"
       - "C:/Windows/System32/OpenSSH/"
       - "C:/Windows/System32/config/systemprofile/AppData/Local/Microsoft/WindowsApps/"
-      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x32/"
-      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x64/"
       - "C:/Windows/CCM/"
       - "C:/Program Files/Microsoft SQL Server/150/Tools/Binn/"
       - "C:/Program Files/Microsoft SQL Server/Client SDK/ODBC/170/Tools/Binn/"
       - "C:/Program Files/dotnet/"
       - "C:/ProgramData/chocolatey/bin/"
       - "C:/Program Files/nodejs/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Program Files (x86)/Windows Kits/10/Windows Performance Toolkit/"
+      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x86/"
+      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/amd64/"
+      - "C:/Program Files/WinDirStat/"
       - "C:/Users/aahern/AppData/Local/Programs/Python/Python313/Scripts/"
       - "C:/Users/aahern/AppData/Local/Programs/Python/Python313/"
+      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x32/"
+      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x64/"
       - "C:/Users/aahern/AppData/Local/Microsoft/WindowsApps/"
       - "C:/Users/aahern/AppData/Local/Programs/Microsoft VS Code/bin/"
       - "C:/Users/aahern/.dotnet/tools/"
@@ -216,6 +236,7 @@ events:
       - "C:/Users/aahern/AppData/Local/Programs/Git/cmd/"
       - "C:/Users/aahern/AppData/Local/GitHubDesktop/bin/"
       - "C:/Users/aahern/.lmstudio/bin/"
+      - "C:/Users/aahern/AppData/Local/Microsoft/WinGet/Packages/GitHub.Copilot_Microsoft.Winget.Source_8wekyb3d8bbwe/"
       - "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/"
       - "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/"
       - "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/VC/Linux/bin/ConnectionManagerExe/"
@@ -246,8 +267,6 @@ events:
         - "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\"
         - "C:\\Windows\\System32\\OpenSSH\\"
         - "C:\\Windows\\system32\\config\\systemprofile\\AppData\\Local\\Microsoft\\WindowsApps"
-        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\x32"
-        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\x64"
         - "C:\\Windows\\CCM"
         - "C:\\Program Files\\Microsoft SQL Server\\150\\Tools\\Binn\\"
         - "C:\\Program Files\\Microsoft SQL Server\\Client SDK\\ODBC\\170\\Tools\\Binn\\"
@@ -259,8 +278,26 @@ events:
         - "C:\\WINDOWS\\System32\\Wbem"
         - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
         - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit\\"
+        - "C:\\WINDOWS\\system32\\config\\systemprofile\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\x86"
+        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\amd64"
+        - "C:\\Program Files\\WinDirStat\\"
         - "C:\\Users\\aahern\\AppData\\Local\\Programs\\Python\\Python313\\Scripts\\"
         - "C:\\Users\\aahern\\AppData\\Local\\Programs\\Python\\Python313\\"
+        - "C:\\Windows\\system32"
+        - "C:\\Windows"
+        - "C:\\Windows\\System32\\Wbem"
+        - "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\Windows\\System32\\OpenSSH\\"
+        - "C:\\Windows\\system32\\config\\systemprofile\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\x32"
+        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\x64"
+        - "C:\\Windows\\CCM"
+        - "C:\\Program Files\\Microsoft SQL Server\\150\\Tools\\Binn\\"
+        - "C:\\Program Files\\Microsoft SQL Server\\Client SDK\\ODBC\\170\\Tools\\Binn\\"
+        - "C:\\Program Files\\dotnet\\"
         - "C:\\Users\\aahern\\AppData\\Local\\Microsoft\\WindowsApps"
         - "C:\\Users\\aahern\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
         - "C:\\Users\\aahern\\.dotnet\\tools"
@@ -271,6 +308,9 @@ events:
         - "C:\\Users\\aahern\\AppData\\Local\\GitHubDesktop\\bin"
         - "C:\\Users\\aahern\\AppData\\Local\\Microsoft\\WindowsApps"
         - "C:\\Users\\aahern\\.lmstudio\\bin"
+        - "C:\\Users\\aahern\\.dotnet\\tools"
+        - "C:\\Users\\aahern\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\aahern\\AppData\\Local\\Microsoft\\WinGet\\Packages\\GitHub.Copilot_Microsoft.Winget.Source_8wekyb3d8bbwe"
         - "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin"
         - "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\Ninja"
         - "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\VC\\Linux\\bin\\ConnectionManagerExe"
@@ -318,16 +358,21 @@ events:
       - "C:/Windows/System32/WindowsPowerShell/v1.0/"
       - "C:/Windows/System32/OpenSSH/"
       - "C:/Windows/System32/config/systemprofile/AppData/Local/Microsoft/WindowsApps/"
-      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x32/"
-      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x64/"
       - "C:/Windows/CCM/"
       - "C:/Program Files/Microsoft SQL Server/150/Tools/Binn/"
       - "C:/Program Files/Microsoft SQL Server/Client SDK/ODBC/170/Tools/Binn/"
       - "C:/Program Files/dotnet/"
       - "C:/ProgramData/chocolatey/bin/"
       - "C:/Program Files/nodejs/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Program Files (x86)/Windows Kits/10/Windows Performance Toolkit/"
+      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x86/"
+      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/amd64/"
+      - "C:/Program Files/WinDirStat/"
       - "C:/Users/aahern/AppData/Local/Programs/Python/Python313/Scripts/"
       - "C:/Users/aahern/AppData/Local/Programs/Python/Python313/"
+      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x32/"
+      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x64/"
       - "C:/Users/aahern/AppData/Local/Microsoft/WindowsApps/"
       - "C:/Users/aahern/AppData/Local/Programs/Microsoft VS Code/bin/"
       - "C:/Users/aahern/.dotnet/tools/"
@@ -337,6 +382,7 @@ events:
       - "C:/Users/aahern/AppData/Local/Programs/Git/cmd/"
       - "C:/Users/aahern/AppData/Local/GitHubDesktop/bin/"
       - "C:/Users/aahern/.lmstudio/bin/"
+      - "C:/Users/aahern/AppData/Local/Microsoft/WinGet/Packages/GitHub.Copilot_Microsoft.Winget.Source_8wekyb3d8bbwe/"
       - "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/"
       - "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/"
       - "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/VC/Linux/bin/ConnectionManagerExe/"
@@ -405,12 +451,6 @@ events:
       - "C:/Windows/System32/config/systemprofile/AppData/Local/Microsoft/WindowsApps/lld-link.com"
       - "C:/Windows/System32/config/systemprofile/AppData/Local/Microsoft/WindowsApps/lld-link.exe"
       - "C:/Windows/System32/config/systemprofile/AppData/Local/Microsoft/WindowsApps/lld-link"
-      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x32/lld-link.com"
-      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x32/lld-link.exe"
-      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x32/lld-link"
-      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x64/lld-link.com"
-      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x64/lld-link.exe"
-      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x64/lld-link"
       - "C:/Windows/CCM/lld-link.com"
       - "C:/Windows/CCM/lld-link.exe"
       - "C:/Windows/CCM/lld-link"
@@ -429,12 +469,33 @@ events:
       - "C:/Program Files/nodejs/lld-link.com"
       - "C:/Program Files/nodejs/lld-link.exe"
       - "C:/Program Files/nodejs/lld-link"
+      - "C:/Program Files/CMake/bin/lld-link.com"
+      - "C:/Program Files/CMake/bin/lld-link.exe"
+      - "C:/Program Files/CMake/bin/lld-link"
+      - "C:/Program Files (x86)/Windows Kits/10/Windows Performance Toolkit/lld-link.com"
+      - "C:/Program Files (x86)/Windows Kits/10/Windows Performance Toolkit/lld-link.exe"
+      - "C:/Program Files (x86)/Windows Kits/10/Windows Performance Toolkit/lld-link"
+      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x86/lld-link.com"
+      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x86/lld-link.exe"
+      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x86/lld-link"
+      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/amd64/lld-link.com"
+      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/amd64/lld-link.exe"
+      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/amd64/lld-link"
+      - "C:/Program Files/WinDirStat/lld-link.com"
+      - "C:/Program Files/WinDirStat/lld-link.exe"
+      - "C:/Program Files/WinDirStat/lld-link"
       - "C:/Users/aahern/AppData/Local/Programs/Python/Python313/Scripts/lld-link.com"
       - "C:/Users/aahern/AppData/Local/Programs/Python/Python313/Scripts/lld-link.exe"
       - "C:/Users/aahern/AppData/Local/Programs/Python/Python313/Scripts/lld-link"
       - "C:/Users/aahern/AppData/Local/Programs/Python/Python313/lld-link.com"
       - "C:/Users/aahern/AppData/Local/Programs/Python/Python313/lld-link.exe"
       - "C:/Users/aahern/AppData/Local/Programs/Python/Python313/lld-link"
+      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x32/lld-link.com"
+      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x32/lld-link.exe"
+      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x32/lld-link"
+      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x64/lld-link.com"
+      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x64/lld-link.exe"
+      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x64/lld-link"
       - "C:/Users/aahern/AppData/Local/Microsoft/WindowsApps/lld-link.com"
       - "C:/Users/aahern/AppData/Local/Microsoft/WindowsApps/lld-link.exe"
       - "C:/Users/aahern/AppData/Local/Microsoft/WindowsApps/lld-link"
@@ -462,6 +523,9 @@ events:
       - "C:/Users/aahern/.lmstudio/bin/lld-link.com"
       - "C:/Users/aahern/.lmstudio/bin/lld-link.exe"
       - "C:/Users/aahern/.lmstudio/bin/lld-link"
+      - "C:/Users/aahern/AppData/Local/Microsoft/WinGet/Packages/GitHub.Copilot_Microsoft.Winget.Source_8wekyb3d8bbwe/lld-link.com"
+      - "C:/Users/aahern/AppData/Local/Microsoft/WinGet/Packages/GitHub.Copilot_Microsoft.Winget.Source_8wekyb3d8bbwe/lld-link.exe"
+      - "C:/Users/aahern/AppData/Local/Microsoft/WinGet/Packages/GitHub.Copilot_Microsoft.Winget.Source_8wekyb3d8bbwe/lld-link"
       - "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/lld-link.com"
       - "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/lld-link.exe"
       - "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/lld-link"
@@ -498,8 +562,6 @@ events:
         - "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\"
         - "C:\\Windows\\System32\\OpenSSH\\"
         - "C:\\Windows\\system32\\config\\systemprofile\\AppData\\Local\\Microsoft\\WindowsApps"
-        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\x32"
-        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\x64"
         - "C:\\Windows\\CCM"
         - "C:\\Program Files\\Microsoft SQL Server\\150\\Tools\\Binn\\"
         - "C:\\Program Files\\Microsoft SQL Server\\Client SDK\\ODBC\\170\\Tools\\Binn\\"
@@ -511,8 +573,26 @@ events:
         - "C:\\WINDOWS\\System32\\Wbem"
         - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
         - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit\\"
+        - "C:\\WINDOWS\\system32\\config\\systemprofile\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\x86"
+        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\amd64"
+        - "C:\\Program Files\\WinDirStat\\"
         - "C:\\Users\\aahern\\AppData\\Local\\Programs\\Python\\Python313\\Scripts\\"
         - "C:\\Users\\aahern\\AppData\\Local\\Programs\\Python\\Python313\\"
+        - "C:\\Windows\\system32"
+        - "C:\\Windows"
+        - "C:\\Windows\\System32\\Wbem"
+        - "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\Windows\\System32\\OpenSSH\\"
+        - "C:\\Windows\\system32\\config\\systemprofile\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\x32"
+        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\x64"
+        - "C:\\Windows\\CCM"
+        - "C:\\Program Files\\Microsoft SQL Server\\150\\Tools\\Binn\\"
+        - "C:\\Program Files\\Microsoft SQL Server\\Client SDK\\ODBC\\170\\Tools\\Binn\\"
+        - "C:\\Program Files\\dotnet\\"
         - "C:\\Users\\aahern\\AppData\\Local\\Microsoft\\WindowsApps"
         - "C:\\Users\\aahern\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
         - "C:\\Users\\aahern\\.dotnet\\tools"
@@ -523,6 +603,9 @@ events:
         - "C:\\Users\\aahern\\AppData\\Local\\GitHubDesktop\\bin"
         - "C:\\Users\\aahern\\AppData\\Local\\Microsoft\\WindowsApps"
         - "C:\\Users\\aahern\\.lmstudio\\bin"
+        - "C:\\Users\\aahern\\.dotnet\\tools"
+        - "C:\\Users\\aahern\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\aahern\\AppData\\Local\\Microsoft\\WinGet\\Packages\\GitHub.Copilot_Microsoft.Winget.Source_8wekyb3d8bbwe"
         - "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin"
         - "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\Ninja"
         - "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\VC\\Linux\\bin\\ConnectionManagerExe"
@@ -568,16 +651,21 @@ events:
       - "C:/Windows/System32/WindowsPowerShell/v1.0/"
       - "C:/Windows/System32/OpenSSH/"
       - "C:/Windows/System32/config/systemprofile/AppData/Local/Microsoft/WindowsApps/"
-      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x32/"
-      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x64/"
       - "C:/Windows/CCM/"
       - "C:/Program Files/Microsoft SQL Server/150/Tools/Binn/"
       - "C:/Program Files/Microsoft SQL Server/Client SDK/ODBC/170/Tools/Binn/"
       - "C:/Program Files/dotnet/"
       - "C:/ProgramData/chocolatey/bin/"
       - "C:/Program Files/nodejs/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Program Files (x86)/Windows Kits/10/Windows Performance Toolkit/"
+      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x86/"
+      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/amd64/"
+      - "C:/Program Files/WinDirStat/"
       - "C:/Users/aahern/AppData/Local/Programs/Python/Python313/Scripts/"
       - "C:/Users/aahern/AppData/Local/Programs/Python/Python313/"
+      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x32/"
+      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x64/"
       - "C:/Users/aahern/AppData/Local/Microsoft/WindowsApps/"
       - "C:/Users/aahern/AppData/Local/Programs/Microsoft VS Code/bin/"
       - "C:/Users/aahern/.dotnet/tools/"
@@ -587,6 +675,7 @@ events:
       - "C:/Users/aahern/AppData/Local/Programs/Git/cmd/"
       - "C:/Users/aahern/AppData/Local/GitHubDesktop/bin/"
       - "C:/Users/aahern/.lmstudio/bin/"
+      - "C:/Users/aahern/AppData/Local/Microsoft/WinGet/Packages/GitHub.Copilot_Microsoft.Winget.Source_8wekyb3d8bbwe/"
       - "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/"
       - "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/"
       - "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/VC/Linux/bin/ConnectionManagerExe/"
@@ -617,8 +706,6 @@ events:
         - "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\"
         - "C:\\Windows\\System32\\OpenSSH\\"
         - "C:\\Windows\\system32\\config\\systemprofile\\AppData\\Local\\Microsoft\\WindowsApps"
-        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\x32"
-        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\x64"
         - "C:\\Windows\\CCM"
         - "C:\\Program Files\\Microsoft SQL Server\\150\\Tools\\Binn\\"
         - "C:\\Program Files\\Microsoft SQL Server\\Client SDK\\ODBC\\170\\Tools\\Binn\\"
@@ -630,8 +717,26 @@ events:
         - "C:\\WINDOWS\\System32\\Wbem"
         - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
         - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit\\"
+        - "C:\\WINDOWS\\system32\\config\\systemprofile\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\x86"
+        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\amd64"
+        - "C:\\Program Files\\WinDirStat\\"
         - "C:\\Users\\aahern\\AppData\\Local\\Programs\\Python\\Python313\\Scripts\\"
         - "C:\\Users\\aahern\\AppData\\Local\\Programs\\Python\\Python313\\"
+        - "C:\\Windows\\system32"
+        - "C:\\Windows"
+        - "C:\\Windows\\System32\\Wbem"
+        - "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\Windows\\System32\\OpenSSH\\"
+        - "C:\\Windows\\system32\\config\\systemprofile\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\x32"
+        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\x64"
+        - "C:\\Windows\\CCM"
+        - "C:\\Program Files\\Microsoft SQL Server\\150\\Tools\\Binn\\"
+        - "C:\\Program Files\\Microsoft SQL Server\\Client SDK\\ODBC\\170\\Tools\\Binn\\"
+        - "C:\\Program Files\\dotnet\\"
         - "C:\\Users\\aahern\\AppData\\Local\\Microsoft\\WindowsApps"
         - "C:\\Users\\aahern\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
         - "C:\\Users\\aahern\\.dotnet\\tools"
@@ -642,6 +747,9 @@ events:
         - "C:\\Users\\aahern\\AppData\\Local\\GitHubDesktop\\bin"
         - "C:\\Users\\aahern\\AppData\\Local\\Microsoft\\WindowsApps"
         - "C:\\Users\\aahern\\.lmstudio\\bin"
+        - "C:\\Users\\aahern\\.dotnet\\tools"
+        - "C:\\Users\\aahern\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\aahern\\AppData\\Local\\Microsoft\\WinGet\\Packages\\GitHub.Copilot_Microsoft.Winget.Source_8wekyb3d8bbwe"
         - "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin"
         - "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\Ninja"
         - "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\VC\\Linux\\bin\\ConnectionManagerExe"
@@ -687,16 +795,21 @@ events:
       - "C:/Windows/System32/WindowsPowerShell/v1.0/"
       - "C:/Windows/System32/OpenSSH/"
       - "C:/Windows/System32/config/systemprofile/AppData/Local/Microsoft/WindowsApps/"
-      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x32/"
-      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x64/"
       - "C:/Windows/CCM/"
       - "C:/Program Files/Microsoft SQL Server/150/Tools/Binn/"
       - "C:/Program Files/Microsoft SQL Server/Client SDK/ODBC/170/Tools/Binn/"
       - "C:/Program Files/dotnet/"
       - "C:/ProgramData/chocolatey/bin/"
       - "C:/Program Files/nodejs/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Program Files (x86)/Windows Kits/10/Windows Performance Toolkit/"
+      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x86/"
+      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/amd64/"
+      - "C:/Program Files/WinDirStat/"
       - "C:/Users/aahern/AppData/Local/Programs/Python/Python313/Scripts/"
       - "C:/Users/aahern/AppData/Local/Programs/Python/Python313/"
+      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x32/"
+      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x64/"
       - "C:/Users/aahern/AppData/Local/Microsoft/WindowsApps/"
       - "C:/Users/aahern/AppData/Local/Programs/Microsoft VS Code/bin/"
       - "C:/Users/aahern/.dotnet/tools/"
@@ -706,6 +819,7 @@ events:
       - "C:/Users/aahern/AppData/Local/Programs/Git/cmd/"
       - "C:/Users/aahern/AppData/Local/GitHubDesktop/bin/"
       - "C:/Users/aahern/.lmstudio/bin/"
+      - "C:/Users/aahern/AppData/Local/Microsoft/WinGet/Packages/GitHub.Copilot_Microsoft.Winget.Source_8wekyb3d8bbwe/"
       - "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/"
       - "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/"
       - "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/VC/Linux/bin/ConnectionManagerExe/"
@@ -760,8 +874,6 @@ events:
         - "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\"
         - "C:\\Windows\\System32\\OpenSSH\\"
         - "C:\\Windows\\system32\\config\\systemprofile\\AppData\\Local\\Microsoft\\WindowsApps"
-        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\x32"
-        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\x64"
         - "C:\\Windows\\CCM"
         - "C:\\Program Files\\Microsoft SQL Server\\150\\Tools\\Binn\\"
         - "C:\\Program Files\\Microsoft SQL Server\\Client SDK\\ODBC\\170\\Tools\\Binn\\"
@@ -773,8 +885,26 @@ events:
         - "C:\\WINDOWS\\System32\\Wbem"
         - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
         - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit\\"
+        - "C:\\WINDOWS\\system32\\config\\systemprofile\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\x86"
+        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\amd64"
+        - "C:\\Program Files\\WinDirStat\\"
         - "C:\\Users\\aahern\\AppData\\Local\\Programs\\Python\\Python313\\Scripts\\"
         - "C:\\Users\\aahern\\AppData\\Local\\Programs\\Python\\Python313\\"
+        - "C:\\Windows\\system32"
+        - "C:\\Windows"
+        - "C:\\Windows\\System32\\Wbem"
+        - "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\Windows\\System32\\OpenSSH\\"
+        - "C:\\Windows\\system32\\config\\systemprofile\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\x32"
+        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\x64"
+        - "C:\\Windows\\CCM"
+        - "C:\\Program Files\\Microsoft SQL Server\\150\\Tools\\Binn\\"
+        - "C:\\Program Files\\Microsoft SQL Server\\Client SDK\\ODBC\\170\\Tools\\Binn\\"
+        - "C:\\Program Files\\dotnet\\"
         - "C:\\Users\\aahern\\AppData\\Local\\Microsoft\\WindowsApps"
         - "C:\\Users\\aahern\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
         - "C:\\Users\\aahern\\.dotnet\\tools"
@@ -785,6 +915,9 @@ events:
         - "C:\\Users\\aahern\\AppData\\Local\\GitHubDesktop\\bin"
         - "C:\\Users\\aahern\\AppData\\Local\\Microsoft\\WindowsApps"
         - "C:\\Users\\aahern\\.lmstudio\\bin"
+        - "C:\\Users\\aahern\\.dotnet\\tools"
+        - "C:\\Users\\aahern\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\aahern\\AppData\\Local\\Microsoft\\WinGet\\Packages\\GitHub.Copilot_Microsoft.Winget.Source_8wekyb3d8bbwe"
         - "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin"
         - "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\Ninja"
         - "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\VC\\Linux\\bin\\ConnectionManagerExe"
@@ -830,16 +963,21 @@ events:
       - "C:/Windows/System32/WindowsPowerShell/v1.0/"
       - "C:/Windows/System32/OpenSSH/"
       - "C:/Windows/System32/config/systemprofile/AppData/Local/Microsoft/WindowsApps/"
-      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x32/"
-      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x64/"
       - "C:/Windows/CCM/"
       - "C:/Program Files/Microsoft SQL Server/150/Tools/Binn/"
       - "C:/Program Files/Microsoft SQL Server/Client SDK/ODBC/170/Tools/Binn/"
       - "C:/Program Files/dotnet/"
       - "C:/ProgramData/chocolatey/bin/"
       - "C:/Program Files/nodejs/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Program Files (x86)/Windows Kits/10/Windows Performance Toolkit/"
+      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x86/"
+      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/amd64/"
+      - "C:/Program Files/WinDirStat/"
       - "C:/Users/aahern/AppData/Local/Programs/Python/Python313/Scripts/"
       - "C:/Users/aahern/AppData/Local/Programs/Python/Python313/"
+      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x32/"
+      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x64/"
       - "C:/Users/aahern/AppData/Local/Microsoft/WindowsApps/"
       - "C:/Users/aahern/AppData/Local/Programs/Microsoft VS Code/bin/"
       - "C:/Users/aahern/.dotnet/tools/"
@@ -849,6 +987,7 @@ events:
       - "C:/Users/aahern/AppData/Local/Programs/Git/cmd/"
       - "C:/Users/aahern/AppData/Local/GitHubDesktop/bin/"
       - "C:/Users/aahern/.lmstudio/bin/"
+      - "C:/Users/aahern/AppData/Local/Microsoft/WinGet/Packages/GitHub.Copilot_Microsoft.Winget.Source_8wekyb3d8bbwe/"
       - "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/"
       - "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/"
       - "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/VC/Linux/bin/ConnectionManagerExe/"
@@ -879,8 +1018,6 @@ events:
         - "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\"
         - "C:\\Windows\\System32\\OpenSSH\\"
         - "C:\\Windows\\system32\\config\\systemprofile\\AppData\\Local\\Microsoft\\WindowsApps"
-        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\x32"
-        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\x64"
         - "C:\\Windows\\CCM"
         - "C:\\Program Files\\Microsoft SQL Server\\150\\Tools\\Binn\\"
         - "C:\\Program Files\\Microsoft SQL Server\\Client SDK\\ODBC\\170\\Tools\\Binn\\"
@@ -892,8 +1029,26 @@ events:
         - "C:\\WINDOWS\\System32\\Wbem"
         - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
         - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit\\"
+        - "C:\\WINDOWS\\system32\\config\\systemprofile\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\x86"
+        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\amd64"
+        - "C:\\Program Files\\WinDirStat\\"
         - "C:\\Users\\aahern\\AppData\\Local\\Programs\\Python\\Python313\\Scripts\\"
         - "C:\\Users\\aahern\\AppData\\Local\\Programs\\Python\\Python313\\"
+        - "C:\\Windows\\system32"
+        - "C:\\Windows"
+        - "C:\\Windows\\System32\\Wbem"
+        - "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\Windows\\System32\\OpenSSH\\"
+        - "C:\\Windows\\system32\\config\\systemprofile\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\x32"
+        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\x64"
+        - "C:\\Windows\\CCM"
+        - "C:\\Program Files\\Microsoft SQL Server\\150\\Tools\\Binn\\"
+        - "C:\\Program Files\\Microsoft SQL Server\\Client SDK\\ODBC\\170\\Tools\\Binn\\"
+        - "C:\\Program Files\\dotnet\\"
         - "C:\\Users\\aahern\\AppData\\Local\\Microsoft\\WindowsApps"
         - "C:\\Users\\aahern\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
         - "C:\\Users\\aahern\\.dotnet\\tools"
@@ -904,6 +1059,9 @@ events:
         - "C:\\Users\\aahern\\AppData\\Local\\GitHubDesktop\\bin"
         - "C:\\Users\\aahern\\AppData\\Local\\Microsoft\\WindowsApps"
         - "C:\\Users\\aahern\\.lmstudio\\bin"
+        - "C:\\Users\\aahern\\.dotnet\\tools"
+        - "C:\\Users\\aahern\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\aahern\\AppData\\Local\\Microsoft\\WinGet\\Packages\\GitHub.Copilot_Microsoft.Winget.Source_8wekyb3d8bbwe"
         - "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin"
         - "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\Ninja"
         - "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\VC\\Linux\\bin\\ConnectionManagerExe"
@@ -952,16 +1110,21 @@ events:
       - "C:/Windows/System32/WindowsPowerShell/v1.0/"
       - "C:/Windows/System32/OpenSSH/"
       - "C:/Windows/System32/config/systemprofile/AppData/Local/Microsoft/WindowsApps/"
-      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x32/"
-      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x64/"
       - "C:/Windows/CCM/"
       - "C:/Program Files/Microsoft SQL Server/150/Tools/Binn/"
       - "C:/Program Files/Microsoft SQL Server/Client SDK/ODBC/170/Tools/Binn/"
       - "C:/Program Files/dotnet/"
       - "C:/ProgramData/chocolatey/bin/"
       - "C:/Program Files/nodejs/"
+      - "C:/Program Files/CMake/bin/"
+      - "C:/Program Files (x86)/Windows Kits/10/Windows Performance Toolkit/"
+      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x86/"
+      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/amd64/"
+      - "C:/Program Files/WinDirStat/"
       - "C:/Users/aahern/AppData/Local/Programs/Python/Python313/Scripts/"
       - "C:/Users/aahern/AppData/Local/Programs/Python/Python313/"
+      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x32/"
+      - "C:/Program Files/Adaptiva/AdaptivaClient/bin/x64/"
       - "C:/Users/aahern/AppData/Local/Microsoft/WindowsApps/"
       - "C:/Users/aahern/AppData/Local/Programs/Microsoft VS Code/bin/"
       - "C:/Users/aahern/.dotnet/tools/"
@@ -971,6 +1134,7 @@ events:
       - "C:/Users/aahern/AppData/Local/Programs/Git/cmd/"
       - "C:/Users/aahern/AppData/Local/GitHubDesktop/bin/"
       - "C:/Users/aahern/.lmstudio/bin/"
+      - "C:/Users/aahern/AppData/Local/Microsoft/WinGet/Packages/GitHub.Copilot_Microsoft.Winget.Source_8wekyb3d8bbwe/"
       - "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/bin/"
       - "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/"
       - "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/VC/Linux/bin/ConnectionManagerExe/"
@@ -1037,8 +1201,6 @@ events:
         - "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\"
         - "C:\\Windows\\System32\\OpenSSH\\"
         - "C:\\Windows\\system32\\config\\systemprofile\\AppData\\Local\\Microsoft\\WindowsApps"
-        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\x32"
-        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\x64"
         - "C:\\Windows\\CCM"
         - "C:\\Program Files\\Microsoft SQL Server\\150\\Tools\\Binn\\"
         - "C:\\Program Files\\Microsoft SQL Server\\Client SDK\\ODBC\\170\\Tools\\Binn\\"
@@ -1050,8 +1212,26 @@ events:
         - "C:\\WINDOWS\\System32\\Wbem"
         - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
         - "C:\\WINDOWS\\System32\\OpenSSH\\"
+        - "C:\\Program Files\\CMake\\bin"
+        - "C:\\Program Files (x86)\\Windows Kits\\10\\Windows Performance Toolkit\\"
+        - "C:\\WINDOWS\\system32\\config\\systemprofile\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\x86"
+        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\amd64"
+        - "C:\\Program Files\\WinDirStat\\"
         - "C:\\Users\\aahern\\AppData\\Local\\Programs\\Python\\Python313\\Scripts\\"
         - "C:\\Users\\aahern\\AppData\\Local\\Programs\\Python\\Python313\\"
+        - "C:\\Windows\\system32"
+        - "C:\\Windows"
+        - "C:\\Windows\\System32\\Wbem"
+        - "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\"
+        - "C:\\Windows\\System32\\OpenSSH\\"
+        - "C:\\Windows\\system32\\config\\systemprofile\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\x32"
+        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\x64"
+        - "C:\\Windows\\CCM"
+        - "C:\\Program Files\\Microsoft SQL Server\\150\\Tools\\Binn\\"
+        - "C:\\Program Files\\Microsoft SQL Server\\Client SDK\\ODBC\\170\\Tools\\Binn\\"
+        - "C:\\Program Files\\dotnet\\"
         - "C:\\Users\\aahern\\AppData\\Local\\Microsoft\\WindowsApps"
         - "C:\\Users\\aahern\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
         - "C:\\Users\\aahern\\.dotnet\\tools"
@@ -1062,6 +1242,9 @@ events:
         - "C:\\Users\\aahern\\AppData\\Local\\GitHubDesktop\\bin"
         - "C:\\Users\\aahern\\AppData\\Local\\Microsoft\\WindowsApps"
         - "C:\\Users\\aahern\\.lmstudio\\bin"
+        - "C:\\Users\\aahern\\.dotnet\\tools"
+        - "C:\\Users\\aahern\\AppData\\Local\\Microsoft\\WindowsApps"
+        - "C:\\Users\\aahern\\AppData\\Local\\Microsoft\\WinGet\\Packages\\GitHub.Copilot_Microsoft.Winget.Source_8wekyb3d8bbwe"
         - "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin"
         - "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\Ninja"
         - "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\VC\\Linux\\bin\\ConnectionManagerExe"
@@ -1081,8 +1264,8 @@ events:
     checks:
       - "Detecting C compiler ABI info"
     directories:
-      source: "C:/Users/aahern/Documents/Chromaplex 8/build/CMakeFiles/CMakeScratch/TryCompile-6d61im"
-      binary: "C:/Users/aahern/Documents/Chromaplex 8/build/CMakeFiles/CMakeScratch/TryCompile-6d61im"
+      source: "C:/Users/aahern/Documents/Chromaplex 8/build/CMakeFiles/CMakeScratch/TryCompile-6nzris"
+      binary: "C:/Users/aahern/Documents/Chromaplex 8/build/CMakeFiles/CMakeScratch/TryCompile-6nzris"
     cmakeVariables:
       CMAKE_C_FLAGS: "/DWIN32 /D_WINDOWS"
       CMAKE_C_FLAGS_DEBUG: "/Zi /Ob0 /Od /RTC1"
@@ -1091,39 +1274,39 @@ events:
       variable: "CMAKE_C_ABI_COMPILED"
       cached: true
       stdout: |
-        Change Dir: 'C:/Users/aahern/Documents/Chromaplex 8/build/CMakeFiles/CMakeScratch/TryCompile-6d61im'
+        Change Dir: 'C:/Users/aahern/Documents/Chromaplex 8/build/CMakeFiles/CMakeScratch/TryCompile-6nzris'
         
-        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_3c342.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
+        Run Build Command(s): "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe" cmTC_4efb5.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=17.0 /v:n
         MSBuild version 17.14.40+3e7442088 for .NET Framework
-        Build started 3/4/2026 4:31:07 PM.
+        Build started 7/2/2026 2:39:42 PM.
         
-        Project "C:\\Users\\aahern\\Documents\\Chromaplex 8\\build\\CMakeFiles\\CMakeScratch\\TryCompile-6d61im\\cmTC_3c342.vcxproj" on node 1 (default targets).
+        Project "C:\\Users\\aahern\\Documents\\Chromaplex 8\\build\\CMakeFiles\\CMakeScratch\\TryCompile-6nzris\\cmTC_4efb5.vcxproj" on node 1 (default targets).
         PrepareForBuild:
           Structured output is enabled. The formatting of compiler diagnostics will reflect the error hierarchy. See https://aka.ms/cpp/structured-output for more details.
-          Creating directory "C:\\Users\\aahern\\Documents\\Chromaplex 8\\build\\CMakeFiles\\CMakeScratch\\TryCompile-6d61im\\Debug\\".
-          Creating directory "cmTC_3c342.dir\\Debug\\cmTC_3c342.tlog\\".
+          Creating directory "C:\\Users\\aahern\\Documents\\Chromaplex 8\\build\\CMakeFiles\\CMakeScratch\\TryCompile-6nzris\\Debug\\".
+          Creating directory "cmTC_4efb5.dir\\Debug\\cmTC_4efb5.tlog\\".
         InitializeBuildStatus:
-          Creating "cmTC_3c342.dir\\Debug\\cmTC_3c342.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
-          Touching "cmTC_3c342.dir\\Debug\\cmTC_3c342.tlog\\unsuccessfulbuild".
+          Creating "cmTC_4efb5.dir\\Debug\\cmTC_4efb5.tlog\\unsuccessfulbuild" because "AlwaysCreate" was specified.
+          Touching "cmTC_4efb5.dir\\Debug\\cmTC_4efb5.tlog\\unsuccessfulbuild".
         ClCompile:
-          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D _MBCS /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /Fo"cmTC_3c342.dir\\Debug\\\\" /Fd"cmTC_3c342.dir\\Debug\\vc143.pdb" /external:W1 /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.2\\Modules\\CMakeCCompilerABI.c"
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\CL.exe /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D _MBCS /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /Fo"cmTC_4efb5.dir\\Debug\\\\" /Fd"cmTC_4efb5.dir\\Debug\\vc143.pdb" /external:W1 /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.2\\Modules\\CMakeCCompilerABI.c"
           Microsoft (R) C/C++ Optimizing Compiler Version 19.44.35223 for x64
           Copyright (C) Microsoft Corporation.  All rights reserved.
-          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D _MBCS /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /Fo"cmTC_3c342.dir\\Debug\\\\" /Fd"cmTC_3c342.dir\\Debug\\vc143.pdb" /external:W1 /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.2\\Modules\\CMakeCCompilerABI.c"
+          cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D _MBCS /D "CMAKE_INTDIR=\\"Debug\\"" /RTC1 /MDd /Fo"cmTC_4efb5.dir\\Debug\\\\" /Fd"cmTC_4efb5.dir\\Debug\\vc143.pdb" /external:W1 /TC /errorReport:queue "C:\\Program Files\\CMake\\share\\cmake-4.2\\Modules\\CMakeCCompilerABI.c"
           CMakeCCompilerABI.c
         Link:
-          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe /OUT:"C:\\Users\\aahern\\Documents\\Chromaplex 8\\build\\CMakeFiles\\CMakeScratch\\TryCompile-6d61im\\Debug\\cmTC_3c342.exe" /INCREMENTAL /ILK:"cmTC_3c342.dir\\Debug\\cmTC_3c342.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Users/aahern/Documents/Chromaplex 8/build/CMakeFiles/CMakeScratch/TryCompile-6d61im/Debug/cmTC_3c342.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /IMPLIB:"C:/Users/aahern/Documents/Chromaplex 8/build/CMakeFiles/CMakeScratch/TryCompile-6d61im/Debug/cmTC_3c342.lib" /MACHINE:X64  /machine:x64 cmTC_3c342.dir\\Debug\\CMakeCCompilerABI.obj
-          cmTC_3c342.vcxproj -> C:\\Users\\aahern\\Documents\\Chromaplex 8\\build\\CMakeFiles\\CMakeScratch\\TryCompile-6d61im\\Debug\\cmTC_3c342.exe
+          C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64\\link.exe /OUT:"C:\\Users\\aahern\\Documents\\Chromaplex 8\\build\\CMakeFiles\\CMakeScratch\\TryCompile-6nzris\\Debug\\cmTC_4efb5.exe" /INCREMENTAL /ILK:"cmTC_4efb5.dir\\Debug\\cmTC_4efb5.ilk" /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:/Users/aahern/Documents/Chromaplex 8/build/CMakeFiles/CMakeScratch/TryCompile-6nzris/Debug/cmTC_4efb5.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /IMPLIB:"C:/Users/aahern/Documents/Chromaplex 8/build/CMakeFiles/CMakeScratch/TryCompile-6nzris/Debug/cmTC_4efb5.lib" /MACHINE:X64  /machine:x64 cmTC_4efb5.dir\\Debug\\CMakeCCompilerABI.obj
+          cmTC_4efb5.vcxproj -> C:\\Users\\aahern\\Documents\\Chromaplex 8\\build\\CMakeFiles\\CMakeScratch\\TryCompile-6nzris\\Debug\\cmTC_4efb5.exe
         FinalizeBuildStatus:
-          Deleting file "cmTC_3c342.dir\\Debug\\cmTC_3c342.tlog\\unsuccessfulbuild".
-          Touching "cmTC_3c342.dir\\Debug\\cmTC_3c342.tlog\\cmTC_3c342.lastbuildstate".
-        Done Building Project "C:\\Users\\aahern\\Documents\\Chromaplex 8\\build\\CMakeFiles\\CMakeScratch\\TryCompile-6d61im\\cmTC_3c342.vcxproj" (default targets).
+          Deleting file "cmTC_4efb5.dir\\Debug\\cmTC_4efb5.tlog\\unsuccessfulbuild".
+          Touching "cmTC_4efb5.dir\\Debug\\cmTC_4efb5.tlog\\cmTC_4efb5.lastbuildstate".
+        Done Building Project "C:\\Users\\aahern\\Documents\\Chromaplex 8\\build\\CMakeFiles\\CMakeScratch\\TryCompile-6nzris\\cmTC_4efb5.vcxproj" (default targets).
         
         Build succeeded.
             0 Warning(s)
             0 Error(s)
         
-        Time Elapsed 00:00:06.24
+        Time Elapsed 00:00:03.36
         
       exitCode: 0
   -
@@ -1154,466 +1337,4 @@ events:
       Running the C compiler's linker: "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.44.35207/bin/HostX64/x64/link.exe" "-v"
       Microsoft (R) Incremental Linker Version 14.44.35223.0
       Copyright (C) Microsoft Corporation.  All rights reserved.
-  -
-    kind: "find_package-v1"
-    backtrace:
-      - "CMakeLists.txt:12 (find_package)"
-    name: "SDL2"
-    configs:
-      -
-        filename: "SDL2Config.cmake"
-        kind: "cmake"
-      -
-        filename: "sdl2-config.cmake"
-        kind: "cmake"
-    version_request:
-      exact: false
-    settings:
-      required: "required_explicit"
-      quiet: false
-      global: false
-      policy_scope: true
-      bypass_provider: false
-      names:
-        - "SDL2"
-      path_suffixes:
-        - ""
-      paths:
-        CMAKE_FIND_USE_CMAKE_PATH: true
-        CMAKE_FIND_USE_CMAKE_ENVIRONMENT_PATH: true
-        CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH: true
-        CMAKE_FIND_USE_CMAKE_SYSTEM_PATH: true
-        CMAKE_FIND_USE_INSTALL_PREFIX: true
-        CMAKE_FIND_USE_PACKAGE_ROOT_PATH: true
-        CMAKE_FIND_USE_CMAKE_PACKAGE_REGISTRY: true
-        CMAKE_FIND_USE_SYSTEM_PACKAGE_REGISTRY: true
-        CMAKE_FIND_ROOT_PATH_MODE: "BOTH"
-    candidates:
-      -
-        path: "C:/Users/aahern/Documents/Chromaplex 8/build/CMakeFiles/pkgRedirects/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Users/aahern/Documents/Chromaplex 8/build/CMakeFiles/pkgRedirects/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/VC/vcpackages/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/VC/vcpackages/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/TestWindow/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/TestWindow/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/TeamFoundation/Team Explorer/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/TeamFoundation/Team Explorer/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/Roslyn/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/Roslyn/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/x64/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files (x86)/Microsoft SDKs/Windows/v10.0A/bin/NETFX 4.8 Tools/x64/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/FSharp/Tools/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/FSharp/Tools/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/Microsoft Visual Studio/2022/Community/Team Tools/DiagnosticsHub/Collector/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/Microsoft Visual Studio/2022/Community/Team Tools/DiagnosticsHub/Collector/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x64/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files (x86)/Windows Kits/10/bin/10.0.26100.0/x64/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files (x86)/Windows Kits/10/bin/x64/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files (x86)/Windows Kits/10/bin/x64/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Windows/Microsoft.NET/Framework64/v4.0.30319/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Windows/Microsoft.NET/Framework64/v4.0.30319/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/Tools/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/Tools/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files (x86)/Microsoft SDKs/Azure/CLI2/wbin/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files (x86)/Microsoft SDKs/Azure/CLI2/wbin/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Windows/System32/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Windows/System32/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Windows/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Windows/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Windows/System32/wbem/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Windows/System32/wbem/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Windows/System32/WindowsPowerShell/v1.0/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Windows/System32/WindowsPowerShell/v1.0/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Windows/System32/OpenSSH/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Windows/System32/OpenSSH/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/Adaptiva/AdaptivaClient/bin/x32/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/Adaptiva/AdaptivaClient/bin/x32/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/Adaptiva/AdaptivaClient/bin/x64/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/Adaptiva/AdaptivaClient/bin/x64/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Windows/CCM/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Windows/CCM/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/Microsoft SQL Server/150/Tools/Binn/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/Microsoft SQL Server/150/Tools/Binn/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/Microsoft SQL Server/Client SDK/ODBC/170/Tools/Binn/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/Microsoft SQL Server/Client SDK/ODBC/170/Tools/Binn/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/dotnet/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/dotnet/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/ProgramData/chocolatey/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/ProgramData/chocolatey/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/nodejs/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/nodejs/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Users/aahern/AppData/Local/Programs/Python/Python313/Scripts/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Users/aahern/AppData/Local/Programs/Python/Python313/Scripts/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Users/aahern/AppData/Local/Programs/Python/Python313/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Users/aahern/AppData/Local/Programs/Python/Python313/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Users/aahern/AppData/Local/Microsoft/WindowsApps/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Users/aahern/AppData/Local/Microsoft/WindowsApps/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Users/aahern/AppData/Local/Programs/Microsoft VS Code/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Users/aahern/AppData/Local/Programs/Microsoft VS Code/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Users/aahern/AppData/Roaming/Code/User/globalStorage/github.copilot-chat/debugCommand/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Users/aahern/AppData/Roaming/Code/User/globalStorage/github.copilot-chat/debugCommand/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Users/aahern/AppData/Roaming/npm/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Users/aahern/AppData/Roaming/npm/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Users/aahern/AppData/Local/Programs/Git/cmd/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Users/aahern/AppData/Local/Programs/Git/cmd/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Users/aahern/AppData/Local/GitHubDesktop/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Users/aahern/AppData/Local/GitHubDesktop/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Users/aahern/.lmstudio/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Users/aahern/.lmstudio/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/CMake/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/CommonExtensions/Microsoft/CMake/Ninja/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/VC/Linux/bin/ConnectionManagerExe/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/IDE/VC/Linux/bin/ConnectionManagerExe/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/vcpkg/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/vcpkg/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/CMake/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/CMake/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files (x86)/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files (x86)/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/CMake/SDL2Config.cmake"
-        mode: "config"
-        reason: "no_exist"
-      -
-        path: "C:/Program Files/CMake/sdl2-config.cmake"
-        mode: "config"
-        reason: "no_exist"
-    found: null
-    search_context:
-      ENV{PATH}:
-        - "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.44.35207\\bin\\HostX64\\x64"
-        - "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\VC\\VCPackages"
-        - "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\TestWindow"
-        - "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\TeamFoundation\\Team Explorer"
-        - "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Current\\bin\\Roslyn"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8 Tools\\x64\\"
-        - "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\FSharp\\Tools"
-        - "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Team Tools\\DiagnosticsHub\\Collector"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\10.0.26100.0\\\\x64"
-        - "C:\\Program Files (x86)\\Windows Kits\\10\\bin\\\\x64"
-        - "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\\\MSBuild\\Current\\Bin\\amd64"
-        - "C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319"
-        - "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\"
-        - "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\Tools\\"
-        - "C:\\Program Files (x86)\\Microsoft SDKs\\Azure\\CLI2\\wbin"
-        - "C:\\Windows\\system32"
-        - "C:\\Windows"
-        - "C:\\Windows\\System32\\Wbem"
-        - "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\"
-        - "C:\\Windows\\System32\\OpenSSH\\"
-        - "C:\\Windows\\system32\\config\\systemprofile\\AppData\\Local\\Microsoft\\WindowsApps"
-        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\x32"
-        - "C:\\Program Files\\Adaptiva\\AdaptivaClient\\bin\\x64"
-        - "C:\\Windows\\CCM"
-        - "C:\\Program Files\\Microsoft SQL Server\\150\\Tools\\Binn\\"
-        - "C:\\Program Files\\Microsoft SQL Server\\Client SDK\\ODBC\\170\\Tools\\Binn\\"
-        - "C:\\Program Files\\dotnet\\"
-        - "C:\\ProgramData\\chocolatey\\bin"
-        - "C:\\Program Files\\nodejs\\"
-        - "C:\\WINDOWS\\system32"
-        - "C:\\WINDOWS"
-        - "C:\\WINDOWS\\System32\\Wbem"
-        - "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\"
-        - "C:\\WINDOWS\\System32\\OpenSSH\\"
-        - "C:\\Users\\aahern\\AppData\\Local\\Programs\\Python\\Python313\\Scripts\\"
-        - "C:\\Users\\aahern\\AppData\\Local\\Programs\\Python\\Python313\\"
-        - "C:\\Users\\aahern\\AppData\\Local\\Microsoft\\WindowsApps"
-        - "C:\\Users\\aahern\\AppData\\Local\\Programs\\Microsoft VS Code\\bin"
-        - "C:\\Users\\aahern\\.dotnet\\tools"
-        - "c:\\Users\\aahern\\AppData\\Roaming\\Code\\User\\globalStorage\\github.copilot-chat\\debugCommand"
-        - "C:\\Program Files\\Git\\bin"
-        - "C:\\Users\\aahern\\AppData\\Roaming\\npm"
-        - "C:\\Users\\aahern\\AppData\\Local\\Programs\\Git\\cmd"
-        - "C:\\Users\\aahern\\AppData\\Local\\GitHubDesktop\\bin"
-        - "C:\\Users\\aahern\\AppData\\Local\\Microsoft\\WindowsApps"
-        - "C:\\Users\\aahern\\.lmstudio\\bin"
-        - "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\CMake\\bin"
-        - "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\CommonExtensions\\Microsoft\\CMake\\Ninja"
-        - "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\Common7\\IDE\\VC\\Linux\\bin\\ConnectionManagerExe"
-        - "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\vcpkg"
-      CMAKE_INSTALL_PREFIX: "C:/Program Files/chromaplex8"
-      CMAKE_SYSTEM_PREFIX_PATH:
-        - "C:/Program Files"
-        - "C:/Program Files (x86)"
-        - "C:/Program Files/CMake"
-        - "C:/Program Files/chromaplex8"
 ...

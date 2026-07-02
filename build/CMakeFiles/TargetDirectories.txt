@@ -1,0 +1,5 @@
+C:/Users/aahern/Documents/Chromaplex 8/build/CMakeFiles/lua_bundled.dir
+C:/Users/aahern/Documents/Chromaplex 8/build/CMakeFiles/chromaplex8.dir
+C:/Users/aahern/Documents/Chromaplex 8/build/CMakeFiles/INSTALL.dir
+C:/Users/aahern/Documents/Chromaplex 8/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/aahern/Documents/Chromaplex 8/build/CMakeFiles/ZERO_CHECK.dir

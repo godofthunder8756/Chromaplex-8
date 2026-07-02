@@ -176,11 +176,14 @@ CMAKE_STATIC_LINKER_FLAGS_RELWITHDEBINFO:STRING=
 // Studio IDE projects all commands are done without /nologo.
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
+//Link statically where possible
+CX8_STATIC:BOOL=OFF
+
+//Use bundled deps from deps/ (auto-detected on Windows)
+CX8_USE_BUNDLED:BOOL=OFF
+
 //Build with PickUp language support
 CX8_USE_PICKUP:BOOL=OFF
-
-//The directory containing a CMake configuration file for SDL2.
-SDL2_DIR:PATH=SDL2_DIR-NOTFOUND
 
 //Value Computed by CMake
 chromaplex8_BINARY_DIR:STATIC=C:/Users/aahern/Documents/Chromaplex 8/build

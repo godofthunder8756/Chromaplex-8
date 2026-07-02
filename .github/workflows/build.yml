@@ -1,0 +1,242 @@
+name: Build Chromaplex 8
+
+on:
+  push:
+    branches: [main, master]
+    tags: ['v*']
+  pull_request:
+    branches: [main, master]
+
+env:
+  SDL2_VERSION: "2.30.11"
+  LUA_VERSION: "5.4.7"
+
+jobs:
+  # ═══════════════════════════════════════════════════════════
+  #  Windows (MSYS2/MinGW-w64)
+  # ═══════════════════════════════════════════════════════════
+  build-windows:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        arch: [x64, x86]
+        include:
+          - arch: x64
+            msystem: MINGW64
+            prefix: mingw-w64-x86_64
+            sdl2_dir: x86_64-w64-mingw32
+          - arch: x86
+            msystem: MINGW32
+            prefix: mingw-w64-i686
+            sdl2_dir: i686-w64-mingw32
+
+    defaults:
+      run:
+        shell: msys2 {0}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: ${{ matrix.msystem }}
+          install: >-
+            ${{ matrix.prefix }}-gcc
+            ${{ matrix.prefix }}-SDL2
+            ${{ matrix.prefix }}-lua
+            make
+
+      - name: Build
+        run: |
+          make linux
+          mv build/chromaplex8 build/chromaplex8.exe || true
+
+      - name: Package
+        run: |
+          mkdir -p dist/chromaplex8-win-${{ matrix.arch }}
+          cp build/chromaplex8* dist/chromaplex8-win-${{ matrix.arch }}/
+          # Copy SDL2 DLL from MSYS2
+          cp /${{ matrix.msystem }}/bin/SDL2.dll dist/chromaplex8-win-${{ matrix.arch }}/
+          cp -r carts dist/chromaplex8-win-${{ matrix.arch }}/
+          cp README.md dist/chromaplex8-win-${{ matrix.arch }}/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: chromaplex8-win-${{ matrix.arch }}
+          path: dist/chromaplex8-win-${{ matrix.arch }}
+
+  # ═══════════════════════════════════════════════════════════
+  #  Windows (Native MSVC via CMake)
+  # ═══════════════════════════════════════════════════════════
+  build-windows-msvc:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup vcpkg
+        uses: lukka/run-vcpkg@v11
+        with:
+          vcpkgGitCommitId: 'a34c873a9717a888f58dc05268dea15592c2f0ff'
+
+      - name: Install dependencies
+        run: vcpkg install sdl2 lua --triplet x64-windows
+
+      - name: Configure CMake
+        run: >
+          cmake -B build -S .
+          -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake
+          -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build
+        run: cmake --build build --config Release
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: chromaplex8-win-msvc-x64
+          path: build/Release/
+
+  # ═══════════════════════════════════════════════════════════
+  #  Linux (Ubuntu — for broad glibc compat)
+  # ═══════════════════════════════════════════════════════════
+  build-linux:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libsdl2-dev liblua5.4-dev pkg-config
+
+      - name: Build
+        run: make linux
+
+      - name: Package
+        run: |
+          mkdir -p dist/chromaplex8-linux-x64
+          cp build/chromaplex8 dist/chromaplex8-linux-x64/
+          cp -r carts dist/chromaplex8-linux-x64/
+          cp README.md dist/chromaplex8-linux-x64/
+          cd dist && tar czf chromaplex8-linux-x64.tar.gz chromaplex8-linux-x64/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: chromaplex8-linux-x64
+          path: dist/chromaplex8-linux-x64.tar.gz
+
+  # ═══════════════════════════════════════════════════════════
+  #  Linux (Arch — container build)
+  # ═══════════════════════════════════════════════════════════
+  build-arch:
+    runs-on: ubuntu-latest
+    container: archlinux:latest
+    steps:
+      - name: Install base tools
+        run: |
+          pacman -Syu --noconfirm
+          pacman -S --noconfirm base-devel sdl2 lua git pkg-config
+
+      - uses: actions/checkout@v4
+
+      - name: Build
+        run: make arch
+
+      - name: Package
+        run: |
+          mkdir -p dist/chromaplex8-arch-x64
+          cp build/chromaplex8 dist/chromaplex8-arch-x64/
+          cp -r carts dist/chromaplex8-arch-x64/
+          cp README.md dist/chromaplex8-arch-x64/
+          cd dist && tar czf chromaplex8-arch-x64.tar.gz chromaplex8-arch-x64/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: chromaplex8-arch-x64
+          path: dist/chromaplex8-arch-x64.tar.gz
+
+  # ═══════════════════════════════════════════════════════════
+  #  macOS (Universal: x64 + arm64)
+  # ═══════════════════════════════════════════════════════════
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: brew install sdl2 lua pkg-config
+
+      - name: Build (native arch)
+        run: make macos
+
+      - name: Package
+        run: |
+          mkdir -p dist/chromaplex8-macos
+          cp build/chromaplex8 dist/chromaplex8-macos/
+          cp -r carts dist/chromaplex8-macos/
+          cp README.md dist/chromaplex8-macos/
+          cd dist && tar czf chromaplex8-macos.tar.gz chromaplex8-macos/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: chromaplex8-macos
+          path: dist/chromaplex8-macos.tar.gz
+
+  # ═══════════════════════════════════════════════════════════
+  #  Cross-compile Windows from Linux
+  # ═══════════════════════════════════════════════════════════
+  cross-win64:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install cross-compiler
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y mingw-w64 zip
+
+      - name: Download SDL2 MinGW
+        run: |
+          if [ ! -d "deps/SDL2-${{ env.SDL2_VERSION }}" ]; then
+            wget -q https://github.com/libsdl-org/SDL/releases/download/release-${{ env.SDL2_VERSION }}/SDL2-devel-${{ env.SDL2_VERSION }}-mingw.tar.gz
+            tar xzf SDL2-devel-${{ env.SDL2_VERSION }}-mingw.tar.gz -C deps/
+          fi
+
+      - name: Ensure Lua source
+        run: |
+          if [ ! -f "deps/lua-${{ env.LUA_VERSION }}/src/lua.h" ]; then
+            wget -q https://www.lua.org/ftp/lua-${{ env.LUA_VERSION }}.tar.gz
+            tar xzf lua-${{ env.LUA_VERSION }}.tar.gz -C deps/
+          fi
+
+      - name: Cross-compile
+        run: make mingw-cross
+
+      - name: Package
+        run: make dist-win64
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: chromaplex8-win64-cross
+          path: build/dist/chromaplex8-*.zip
+
+  # ═══════════════════════════════════════════════════════════
+  #  Release (on tag push)
+  # ═══════════════════════════════════════════════════════════
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [build-windows, build-linux, build-arch, build-macos, cross-win64]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+
+      - name: Create release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            artifacts/**/*.tar.gz
+            artifacts/**/*.zip
+          generate_release_notes: true

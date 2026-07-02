@@ -1,0 +1,25 @@
+# Maintainer: Chromaplex 8 Team
+pkgname=chromaplex8
+pkgver=1.0.0
+pkgrel=1
+pkgdesc="Fantasy Game Console — 256×144, 64 colours, Lua scripting"
+arch=('x86_64')
+url="https://github.com/user/chromaplex8"
+license=('MIT')
+depends=('sdl2' 'lua')
+makedepends=('gcc' 'make' 'pkg-config')
+source=("$pkgname-$pkgver.tar.gz")
+sha256sums=('SKIP')
+
+build() {
+    cd "$srcdir/$pkgname-$pkgver"
+    make arch
+}
+
+package() {
+    cd "$srcdir/$pkgname-$pkgver"
+    install -Dm755 "build/chromaplex8" "$pkgdir/usr/bin/chromaplex8"
+    install -dm755 "$pkgdir/usr/share/chromaplex8/carts"
+    cp -r carts/* "$pkgdir/usr/share/chromaplex8/carts/"
+    install -Dm644 README.md "$pkgdir/usr/share/doc/$pkgname/README.md"
+}
