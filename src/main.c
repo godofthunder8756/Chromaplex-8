@@ -37,6 +37,8 @@
 #include "cx8_pixstretch.h"
 #include "cx8_persist.h"
 #include "cx8_music.h"
+#include "cx8_crt.h"
+#include "cx8_hub.h"
 
 /* ─── Application states ───────────────────────────────────── */
 
@@ -220,6 +222,9 @@ static void present_frame(void)
     if (cx8_fx_is_enabled()) {
         cx8_fx_apply(g_pixels, CX8_SCREEN_W, CX8_SCREEN_H);
     }
+
+    /* Apply CRT post-processing */
+    cx8_crt_apply(g_pixels, CX8_SCREEN_W, CX8_SCREEN_H);
 
     SDL_UpdateTexture(g_texture, NULL, g_pixels, CX8_SCREEN_W * sizeof(uint32_t));
 
@@ -523,6 +528,8 @@ int main(int argc, char *argv[])
     cx8_fx_init();
     cx8_net_init();
     cx8_music_init();
+    cx8_crt_init();
+    cx8_hub_init(g_carts_dir);
 
     /* Load requested modules */
     for (int i = 0; i < mod_count; i++)
@@ -593,6 +600,10 @@ int main(int argc, char *argv[])
                     (e.key.keysym.sym == SDLK_RETURN &&
                      (e.key.keysym.mod & KMOD_ALT))) {
                     toggle_fullscreen();
+                }
+                /* F9: cycle CRT post-processing mode */
+                if (e.key.keysym.sym == SDLK_F9) {
+                    cx8_crt_cycle();
                 }
                 handle_game_key(e.key.keysym.sym, true);
             }

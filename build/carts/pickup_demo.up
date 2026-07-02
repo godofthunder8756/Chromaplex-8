@@ -1,0 +1,75 @@
+-- title: PickUp Demo
+-- author: Chromaplex Team
+-- desc: Demonstrates PickUp language features
+
+-- Variables (just like Lua, but arrays are 0-based!)
+colors = [8, 9, 10, 11, 12, 13, 14, 15]
+particles = []
+t = 0
+
+-- Functions work the same as Lua
+function make_particle(x, y)
+    local p = {x = x, y = y, vx = rnd(4) - 2, vy = rnd(4) - 2, life = 60, col = colors[flr(rnd(8))]}
+    return p
+end
+
+function _init()
+    -- Enable CRT for that retro look
+    crt_mode(CRT_SCANLINES)
+
+    -- Spawn initial particles
+    for i = 0, 20 do
+        local p = make_particle(128, 72)
+        particles[i] = p
+    end
+end
+
+function _update()
+    t = t + 1
+
+    -- Update particles
+    for i = 0, #particles - 1 do
+        local p = particles[i]
+        if p ~= nil then
+            p.x = p.x + p.vx
+            p.y = p.y + p.vy
+            p.vy = p.vy + 0.1
+            p.life = p.life - 1
+
+            -- Respawn dead particles
+            if p.life <= 0 then
+                particles[i] = make_particle(128 + sin(t/60) * 40, 72)
+            end
+        end
+    end
+
+    -- Spawn new particles on button press
+    if btnp(BTN_A) then
+        for i = 0, 5 do
+            local idx = #particles
+            particles[idx] = make_particle(128, 72)
+        end
+    end
+end
+
+function _draw()
+    cls(0)
+
+    -- Draw particles
+    for i = 0, #particles - 1 do
+        local p = particles[i]
+        if p ~= nil and p.life > 0 then
+            local size = p.life / 30
+            if size < 1 then
+                pset(flr(p.x), flr(p.y), p.col)
+            else
+                circfill(flr(p.x), flr(p.y), flr(size), p.col)
+            end
+        end
+    end
+
+    -- Title
+    print("PICKUP LANGUAGE DEMO", 64, 4, 7)
+    print("PRESS Z TO SPAWN", 80, SCREEN_H - 12, 5)
+    print("F9: CYCLE CRT MODE", 76, SCREEN_H - 6, 5)
+end

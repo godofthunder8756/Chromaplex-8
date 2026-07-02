@@ -36,8 +36,11 @@ void cx8_cart_expand(size_t extra_bytes);
 /* Load a .cx8 or .lua cartridge from disk */
 bool cx8_cart_load(const char *path, cx8_cart_t *cart);
 
-/* Save a cartridge back to disk */
+/* Save a cartridge back to disk (.lua text format) */
 bool cx8_cart_save(const char *path, const cx8_cart_t *cart);
+
+/* Save a cartridge in compressed binary .cx8 format */
+bool cx8_cart_save_binary(const char *path, const cx8_cart_t *cart);
 
 /* Free cartridge data */
 void cx8_cart_free(cx8_cart_t *cart);

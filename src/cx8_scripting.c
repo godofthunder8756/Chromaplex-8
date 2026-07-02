@@ -1006,6 +1006,110 @@ static int l_text_width(lua_State *L)
 }
 
 /* ═══════════════════════════════════════════════════════════════
+ *  CRT POST-PROCESSING API
+ * ═══════════════════════════════════════════════════════════════ */
+
+#include "cx8_crt.h"
+
+/* crt_mode([mode]) — set/get CRT mode (0=off, 1=scanlines, 2=full, 3=heavy) */
+static int l_crt_mode(lua_State *L)
+{
+    if (lua_gettop(L) >= 1) {
+        int mode = CHECKINT(L, 1);
+        cx8_crt_set_mode(mode);
+    }
+    lua_pushinteger(L, cx8_crt_get_mode());
+    return 1;
+}
+
+/* crt_scanlines(intensity) — set scanline darkness (0.0-1.0) */
+static int l_crt_scanlines(lua_State *L)
+{
+    float v = (float)luaL_checknumber(L, 1);
+    cx8_crt_set_scanline_intensity(v);
+    return 0;
+}
+
+/* crt_vignette(strength) — set edge darkening (0.0-1.0) */
+static int l_crt_vignette(lua_State *L)
+{
+    float v = (float)luaL_checknumber(L, 1);
+    cx8_crt_set_vignette_strength(v);
+    return 0;
+}
+
+/* crt_bloom(amount) — set bloom bleed (0.0-1.0) */
+static int l_crt_bloom(lua_State *L)
+{
+    float v = (float)luaL_checknumber(L, 1);
+    cx8_crt_set_bloom(v);
+    return 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+ *  COMMUNITY HUB API
+ * ═══════════════════════════════════════════════════════════════ */
+
+#include "cx8_hub.h"
+
+/* hub_browse([page]) — fetch cart list from community hub */
+static int l_hub_browse(lua_State *L)
+{
+    int page = OPTINT(L, 1, 0);
+    cx8_hub_fetch_list(page);
+    lua_pushinteger(L, (int)cx8_hub_get_state());
+    return 1;
+}
+
+/* hub_count() — number of entries in current listing */
+static int l_hub_count(lua_State *L)
+{
+    lua_pushinteger(L, cx8_hub_entry_count());
+    return 1;
+}
+
+/* hub_entry(index) — get cart entry as table {id, title, author, desc} */
+static int l_hub_entry(lua_State *L)
+{
+    int idx = CHECKINT(L, 1);
+    const cx8_hub_entry_t *e = cx8_hub_entry(idx);
+    if (!e) { lua_pushnil(L); return 1; }
+
+    lua_newtable(L);
+    lua_pushstring(L, e->id);          lua_setfield(L, -2, "id");
+    lua_pushstring(L, e->title);       lua_setfield(L, -2, "title");
+    lua_pushstring(L, e->author);      lua_setfield(L, -2, "author");
+    lua_pushstring(L, e->description); lua_setfield(L, -2, "desc");
+    lua_pushinteger(L, e->downloads);  lua_setfield(L, -2, "downloads");
+    lua_pushinteger(L, e->likes);      lua_setfield(L, -2, "likes");
+    return 1;
+}
+
+/* hub_download(id) — download a cart by ID, returns local path or nil */
+static int l_hub_download(lua_State *L)
+{
+    const char *id = luaL_checkstring(L, 1);
+    const char *path = cx8_hub_download(id);
+    if (path) lua_pushstring(L, path);
+    else lua_pushnil(L);
+    return 1;
+}
+
+/* hub_state() — get hub state (0=idle, 1=fetching, 2=ready, 3=error, 4=offline) */
+static int l_hub_state(lua_State *L)
+{
+    lua_pushinteger(L, (int)cx8_hub_get_state());
+    return 1;
+}
+
+/* hub_error() — get last hub error message */
+static int l_hub_error(lua_State *L)
+{
+    lua_pushstring(L, cx8_hub_error());
+    return 1;
+}
+
+/* ═══════════════════════════════════════════════════════════════
  *  SYSTEM CONSTANTS
  * ═══════════════════════════════════════════════════════════════ */
 
@@ -1055,6 +1159,12 @@ static void register_constants(lua_State *L)
     lua_pushinteger(L, CX8_DITHER_HLINE);   lua_setglobal(L, "DITHER_HLINE");
     lua_pushinteger(L, CX8_DITHER_VLINE);   lua_setglobal(L, "DITHER_VLINE");
     lua_pushinteger(L, CX8_DITHER_DIAG);    lua_setglobal(L, "DITHER_DIAG");
+
+    /* CRT modes */
+    lua_pushinteger(L, CX8_CRT_OFF);        lua_setglobal(L, "CRT_OFF");
+    lua_pushinteger(L, CX8_CRT_SCANLINES);  lua_setglobal(L, "CRT_SCANLINES");
+    lua_pushinteger(L, CX8_CRT_FULL);       lua_setglobal(L, "CRT_FULL");
+    lua_pushinteger(L, CX8_CRT_HEAVY);      lua_setglobal(L, "CRT_HEAVY");
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -1179,6 +1289,20 @@ static const struct { const char *name; lua_CFunction func; } s_api[] = {
 
     /* Text measurement */
     { "text_width",       l_text_width       },
+
+    /* CRT Post-Processing */
+    { "crt_mode",         l_crt_mode         },
+    { "crt_scanlines",    l_crt_scanlines    },
+    { "crt_vignette",     l_crt_vignette     },
+    { "crt_bloom",        l_crt_bloom        },
+
+    /* Community Hub */
+    { "hub_browse",       l_hub_browse       },
+    { "hub_count",        l_hub_count        },
+    { "hub_entry",        l_hub_entry        },
+    { "hub_download",     l_hub_download     },
+    { "hub_state",        l_hub_state        },
+    { "hub_error",        l_hub_error        },
 
     { NULL, NULL }
 };

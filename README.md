@@ -124,8 +124,11 @@ cmake --build build
 | X / V | Button B |
 | A / S | Button X |
 | D / F | Button Y |
-| Escape | Quit |
+| Escape | Quit / Return to home |
 | Enter / Space | Skip boot screen |
+| F9 | Cycle CRT mode (Off → Scanlines → Full → Heavy) |
+| F11 / Alt+Enter | Toggle fullscreen |
+| R (on error screen) | Reload cart |
 
 ---
 
@@ -313,6 +316,102 @@ function _update()    -- called every frame (60 FPS)
 function _draw()      -- called every frame for rendering
 ```
 
+### CRT Post-Processing
+
+Toggle with **F9** at any time, or control from code:
+
+```lua
+crt_mode(CRT_SCANLINES)    -- enable scanlines
+crt_mode(CRT_FULL)         -- scanlines + vignette
+crt_mode(CRT_HEAVY)        -- full + bloom
+crt_mode(CRT_OFF)          -- disable
+
+-- Fine-tune parameters
+crt_scanlines(0.4)         -- scanline darkness (0.0-1.0)
+crt_vignette(0.3)          -- edge darkening (0.0-1.0)
+crt_bloom(0.2)             -- bright pixel bleed (0.0-1.0)
+```
+
+### Community Hub
+
+Browse and download community cartridges:
+
+```lua
+hub_browse(0)              -- fetch page 0 of cart listings
+state = hub_state()        -- 0=idle, 2=ready, 4=offline
+n = hub_count()            -- number of entries fetched
+entry = hub_entry(0)       -- {id, title, author, desc, downloads, likes}
+path = hub_download("id")  -- download cart to local carts/
+err = hub_error()          -- last error message
+```
+
+---
+
+## PickUp Language Support
+
+Chromaplex 8 supports [PickUp](https://github.com/godofthunder8756/Pickup-Lang) as an alternative scripting language. PickUp is a modern Lua-inspired language with cleaner syntax:
+
+- **0-based array indexing** (instead of Lua's 1-based)
+- **`[1, 2, 3]`** array literals
+- **`try/catch/throw`** error handling
+- **`continue`** in loops
+- **`import "module"`** syntax (stripped — CX8 APIs are always global)
+
+Save your carts as `.up` files and they'll be automatically transpiled to Lua:
+
+```
+chromaplex8 carts/my_game.up
+```
+
+Example PickUp cart:
+
+```lua
+-- title: My Game
+-- author: Me
+
+colors = [8, 9, 10, 11, 12]
+
+function _init()
+    x = 128
+    y = 72
+end
+
+function _update()
+    if btn(BTN_LEFT) then x = x - 2 end
+    if btn(BTN_RIGHT) then x = x + 2 end
+
+    -- try/catch for safe operations
+    try
+        if x < 0 then throw "out of bounds" end
+    catch e
+        x = 128
+    end
+end
+
+function _draw()
+    cls(0)
+    circfill(x, y, 8, colors[0])
+end
+```
+
+---
+
+## Binary Cartridge Format
+
+Carts can be saved in compressed `.cx8` binary format for smaller file sizes:
+
+| Section | Contents |
+|---------|----------|
+| Magic | `CX8B` (4 bytes) |
+| Version | `1` (uint8) |
+| Flags | bit 0 = RLE compressed |
+| Header | title, author, description (length-prefixed) |
+| Source | compressed Lua/PickUp code |
+| Sprites | compressed sprite sheet |
+| Map | compressed tile map |
+
+The binary format uses RLE compression and is typically 30-50% smaller than text `.lua` carts. The loader auto-detects format by magic bytes.
+
 ---
 
 ## Built-in Editors
@@ -389,12 +488,15 @@ Chromaplex 8/
 │   ├── cx8_apu.h/c          WAVE-4 audio engine
 │   ├── cx8_input.h/c        Input & gamepad subsystem (4 players)
 │   ├── cx8_memory.h/c       RAM management
-│   ├── cx8_cart.h/c          Cartridge loader
-│   ├── cx8_modules.h/c      Expansion module system
+│   ├── cx8_cart.h/c          Cartridge loader (text + binary)
+│   ├── cx8_modules.h/c      Expansion module system (auto-scan)
 │   ├── cx8_scripting.h/c    Lua bridge (full API)
+│   ├── cx8_pickup.h/c       PickUp language transpiler
 │   ├── cx8_font.h/c         Embedded pixel font
+│   ├── cx8_crt.h/c          CRT post-processing (scanlines, vignette, bloom)
 │   ├── cx8_netlink.h/c      NETLINK-1 LAN networking (UDP)
 │   ├── cx8_pixstretch.h/c   PIXEL-STRETCH PRO visual FX
+│   ├── cx8_hub.h/c          Community cart hub (HTTP client)
 │   ├── cx8_home.h/c         Home screen & menu
 │   ├── cx8_editor.h/c       Editor framework
 │   ├── cx8_ed_code.h/c      Code editor
@@ -408,7 +510,8 @@ Chromaplex 8/
 │   ├── modules.lua          Module bay demo
 │   ├── netlink.lua          LAN multiplayer demo
 │   ├── pixstretch.lua       Visual FX showcase
-│   └── gamepad.lua          Controller test utility
+│   ├── gamepad.lua          Controller test utility
+│   └── pickup_demo.up       PickUp language demo
 └── docs/
     └── index.html           Full HTML documentation
 ```
@@ -417,14 +520,10 @@ Chromaplex 8/
 
 ## Roadmap
 
-- [x] Built-in sprite/map/SFX editors
-- [ ] PickUp language scripting support
-- [x] PIXEL-STRETCH PRO palette cycling & dithering
-- [x] NETLINK-1 multiplayer networking
-- [ ] `.cx8` cartridge binary format with compression
-- [ ] Cartridge sharing / community hub
-- [x] Gamepad / controller support
-- [ ] CRT shader / scanline post-processing
+- [x] PickUp language scripting support
+- [x] `.cx8` cartridge binary format with compression
+- [x] Cartridge sharing / community hub
+- [x] CRT shader / scanline post-processing
 
 ---
 
