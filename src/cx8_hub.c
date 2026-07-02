@@ -9,6 +9,10 @@
  * that can be activated when a community server is available.
  */
 
+#ifndef _WIN32
+#define _POSIX_C_SOURCE 200112L
+#endif
+
 #include "cx8_hub.h"
 #include <stdio.h>
 #include <stdlib.h>
