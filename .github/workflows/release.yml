@@ -1,0 +1,180 @@
+name: Release on Main
+
+on:
+  push:
+    branches: [main]
+
+env:
+  SDL2_VERSION: "2.30.11"
+  LUA_VERSION: "5.4.7"
+
+jobs:
+  # ═══════════════════════════════════════════════════════════
+  #  Build all platforms
+  # ═══════════════════════════════════════════════════════════
+  build-windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          install: >-
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-SDL2
+            mingw-w64-x86_64-lua
+            make
+            zip
+
+      - name: Build
+        run: make linux && mv build/chromaplex8 build/chromaplex8.exe || true
+
+      - name: Package
+        run: |
+          mkdir -p dist/chromaplex8-win-x64
+          cp build/chromaplex8* dist/chromaplex8-win-x64/
+          cp /mingw64/bin/SDL2.dll dist/chromaplex8-win-x64/
+          cp -r carts dist/chromaplex8-win-x64/
+          cp README.md dist/chromaplex8-win-x64/
+          cd dist && zip -r chromaplex8-win-x64.zip chromaplex8-win-x64/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: chromaplex8-win-x64
+          path: dist/chromaplex8-win-x64.zip
+
+  build-linux:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libsdl2-dev liblua5.4-dev pkg-config
+
+      - name: Build
+        run: make linux
+
+      - name: Package
+        run: |
+          mkdir -p dist/chromaplex8-linux-x64
+          cp build/chromaplex8 dist/chromaplex8-linux-x64/
+          cp -r carts dist/chromaplex8-linux-x64/
+          cp README.md dist/chromaplex8-linux-x64/
+          cd dist && tar czf chromaplex8-linux-x64.tar.gz chromaplex8-linux-x64/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: chromaplex8-linux-x64
+          path: dist/chromaplex8-linux-x64.tar.gz
+
+  build-arch:
+    runs-on: ubuntu-latest
+    container: archlinux:latest
+    steps:
+      - name: Install base tools
+        run: |
+          pacman -Syu --noconfirm
+          pacman -S --noconfirm base-devel sdl2 lua git pkg-config
+
+      - uses: actions/checkout@v4
+
+      - name: Build
+        run: make arch
+
+      - name: Package
+        run: |
+          mkdir -p dist/chromaplex8-arch-x64
+          cp build/chromaplex8 dist/chromaplex8-arch-x64/
+          cp -r carts dist/chromaplex8-arch-x64/
+          cp README.md dist/chromaplex8-arch-x64/
+          cd dist && tar czf chromaplex8-arch-x64.tar.gz chromaplex8-arch-x64/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: chromaplex8-arch-x64
+          path: dist/chromaplex8-arch-x64.tar.gz
+
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: brew install sdl2 lua pkg-config
+
+      - name: Build
+        run: make macos
+
+      - name: Package
+        run: |
+          mkdir -p dist/chromaplex8-macos
+          cp build/chromaplex8 dist/chromaplex8-macos/
+          cp -r carts dist/chromaplex8-macos/
+          cp README.md dist/chromaplex8-macos/
+          cd dist && tar czf chromaplex8-macos.tar.gz chromaplex8-macos/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: chromaplex8-macos
+          path: dist/chromaplex8-macos.tar.gz
+
+  # ═══════════════════════════════════════════════════════════
+  #  Create/update rolling "latest" release
+  # ═══════════════════════════════════════════════════════════
+  release:
+    needs: [build-windows, build-linux, build-arch, build-macos]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+
+      - name: Generate release body
+        id: body
+        run: |
+          SHA="${{ github.sha }}"
+          SHORT="${SHA:0:7}"
+          echo "short_sha=$SHORT" >> "$GITHUB_OUTPUT"
+          echo "## Chromaplex 8 — Latest Build" > body.md
+          echo "" >> body.md
+          echo "Auto-built from [\`$SHORT\`](${{ github.server_url }}/${{ github.repository }}/commit/$SHA) on $(date -u '+%Y-%m-%d %H:%M UTC')" >> body.md
+          echo "" >> body.md
+          echo "### Downloads" >> body.md
+          echo "| Platform | File |" >> body.md
+          echo "|----------|------|" >> body.md
+          echo "| Windows x64 | \`chromaplex8-win-x64.zip\` |" >> body.md
+          echo "| Linux x64 (Ubuntu/Debian) | \`chromaplex8-linux-x64.tar.gz\` |" >> body.md
+          echo "| Linux x64 (Arch) | \`chromaplex8-arch-x64.tar.gz\` |" >> body.md
+          echo "| macOS (Apple Silicon) | \`chromaplex8-macos.tar.gz\` |" >> body.md
+          echo "" >> body.md
+          echo "### Recent Changes" >> body.md
+          git log --oneline -10 >> body.md
+
+      - name: Delete existing latest release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release delete latest --yes --cleanup-tag 2>/dev/null || true
+
+      - name: Create latest release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create latest \
+            --title "Latest Build (${{ steps.body.outputs.short_sha }})" \
+            --notes-file body.md \
+            --prerelease \
+            artifacts/chromaplex8-win-x64/*.zip \
+            artifacts/chromaplex8-linux-x64/*.tar.gz \
+            artifacts/chromaplex8-arch-x64/*.tar.gz \
+            artifacts/chromaplex8-macos/*.tar.gz
