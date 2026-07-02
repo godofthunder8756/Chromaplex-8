@@ -1,0 +1,35 @@
+
+  ╔═══════════════════════════════════════════╗
+  ║           C H R O M A P L E X   8        ║
+  ║         Fantasy Game Console v1.0         ║
+  ╟───────────────────────────────────────────╢
+  ║  CPU: CX8-A      GPU: PRISM-64           ║
+  ║  APU: WAVE-4     RAM: 128 KB              ║
+  ║  Display: 256x144  Palette: 64 colours   ║
+  ║  Cart: 64 KB  (no token limit)            ║
+  ╚═══════════════════════════════════════════╝
+
+[CX8-MEM] Initialised 128 KB RAM
+[CX8-GPU] PRISM-64 initialised (256x144, 64 colours)
+[CX8-APU] WAVE-4 initialised (44100 Hz, 4 channels)
+[CX8-CART] Cartridge system ready (64 KB max)
+[CX8-MOD] Module bay initialised (8 slots)
+[PIXSTRETCH] Visual FX engine initialised
+[NETLINK-1] ╔══════════════════════════════════════╗
+[NETLINK-1] ║  NETLINK-1 by CyberConnect          ║
+[NETLINK-1] ║  "The world is your lobby."          ║
+[NETLINK-1] ║  Networking subsystem initialised    ║
+[NETLINK-1] ╚══════════════════════════════════════╝
+[CX8-MUSIC] Sequencer ready
+[CX8-CART] Loaded: "NETLINK-1 Demo" by CyberConnect
+[CX8-MOD] Scanning cart for module requirements...
+[CX8-MOD] Auto-detected module from header: netlink -> 4
+[CX8-MOD] ╔══════════════════════════════════════╗
+[CX8-MOD] ║  INSERTING: NETLINK-1                ║
+[CX8-MOD] ║  By: CyberConnect                    ║
+[CX8-MOD] ║  "The world is your lobby."            ║
+[CX8-MOD] ╚══════════════════════════════════════╝
+[CX8-MOD] NETLINK-1: Networking active
+[CX8-MOD] Auto-loaded 1 module(s)
+[CX8-LUA] Lua 5.4 scripting engine ready
+[CX8] Running cartridge: carts\netlink.lua

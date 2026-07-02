@@ -52,4 +52,19 @@ int  cx8_module_count_loaded(void);
 /* Iterate all available modules (returns count) */
 int  cx8_module_list(const cx8_module_t **out, int max);
 
+/* ─── Automatic module scanning ────────────────────────────── */
+
+/*
+ * Scan a cart's source code for module requirements.
+ * Detects:
+ *   1. Header declarations:  "-- modules: netlink, pixstretch, turbo_ram"
+ *   2. Code patterns:        mod_load(MOD_NETLINK)
+ *
+ * Auto-loads all detected modules. Returns count loaded.
+ */
+int  cx8_modules_auto_scan(const char *source);
+
+/* Resolve a module name string (e.g. "netlink") to a module ID. Returns -1 if unknown. */
+int  cx8_module_id_from_name(const char *name);
+
 #endif /* CX8_MODULES_H */

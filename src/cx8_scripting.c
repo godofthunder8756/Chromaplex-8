@@ -42,12 +42,32 @@
 static clock_t s_start_time;
 
 /* ─── Runtime error state ──────────────────────────────────── */
-static char s_error_msg[512] = "";
+static char s_error_msg[1024] = "";
 static bool s_has_error = false;
 
 bool cx8_script_has_error(void) { return s_has_error; }
 const char *cx8_script_get_error(void) { return s_error_msg; }
 void cx8_script_clear_error(void) { s_has_error = false; s_error_msg[0] = '\0'; }
+
+/* Store an error message for on-screen display */
+static void set_error(const char *msg)
+{
+    snprintf(s_error_msg, sizeof(s_error_msg), "%s", msg ? msg : "unknown error");
+    s_has_error = true;
+}
+
+/* ─── Lua traceback message handler ───────────────────────── */
+static int traceback_handler(lua_State *L)
+{
+    const char *msg = lua_tostring(L, 1);
+    if (msg == NULL) {
+        if (luaL_callmeta(L, 1, "__tostring") && lua_type(L, -1) == LUA_TSTRING)
+            return 1;
+        msg = "(non-string error)";
+    }
+    luaL_traceback(L, L, msg, 1);
+    return 1;
+}
 
 /* ═══════════════════════════════════════════════════════════════
  *  DRAWING API
@@ -1195,18 +1215,32 @@ lua_State *cx8_script_init(void)
 
 bool cx8_script_load(lua_State *L, const char *source, const char *name)
 {
-    if (!L || !source) return false;
+    if (!L || !source) {
+        set_error("Failed to load cart: NULL state or source");
+        return false;
+    }
 
     int err = luaL_loadbuffer(L, source, strlen(source), name ? name : "cart");
     if (err != LUA_OK) {
-        fprintf(stderr, "[CX8-LUA] Load error: %s\n", lua_tostring(L, -1));
+        const char *msg = lua_tostring(L, -1);
+        fprintf(stderr, "[CX8-LUA] Load error: %s\n", msg);
+        set_error(msg);
         lua_pop(L, 1);
         return false;
     }
 
-    err = lua_pcall(L, 0, 0, 0);
+    /* Push traceback handler, then run the chunk */
+    lua_pushcfunction(L, traceback_handler);
+    lua_insert(L, -2);  /* put handler below the chunk */
+    int msgh = lua_gettop(L) - 1;
+
+    err = lua_pcall(L, 0, 0, msgh);
+    lua_remove(L, msgh);  /* remove handler */
+
     if (err != LUA_OK) {
-        fprintf(stderr, "[CX8-LUA] Run error: %s\n", lua_tostring(L, -1));
+        const char *msg = lua_tostring(L, -1);
+        fprintf(stderr, "[CX8-LUA] Run error: %s\n", msg);
+        set_error(msg);
         lua_pop(L, 1);
         return false;
     }
@@ -1218,14 +1252,19 @@ static void safe_call(lua_State *L, const char *func_name)
 {
     lua_getglobal(L, func_name);
     if (lua_isfunction(L, -1)) {
-        if (lua_pcall(L, 0, 0, 0) != LUA_OK) {
+        /* Push traceback handler below the function */
+        int msgh = lua_gettop(L) - 1;
+        lua_pushcfunction(L, traceback_handler);
+        lua_insert(L, msgh + 1);
+
+        if (lua_pcall(L, 0, 0, msgh + 1) != LUA_OK) {
             const char *err = lua_tostring(L, -1);
             fprintf(stderr, "[CX8-LUA] %s() error: %s\n", func_name, err);
-            /* Store error for on-screen display */
-            snprintf(s_error_msg, sizeof(s_error_msg), "%s", err ? err : "unknown error");
-            s_has_error = true;
+            set_error(err);
             lua_pop(L, 1);
         }
+        /* Remove traceback handler */
+        lua_remove(L, msgh + 1);
     } else {
         lua_pop(L, 1);
     }
@@ -1234,6 +1273,8 @@ static void safe_call(lua_State *L, const char *func_name)
 void cx8_script_call_init(lua_State *L)   { safe_call(L, "_init");   }
 void cx8_script_call_update(lua_State *L) { safe_call(L, "_update"); }
 void cx8_script_call_draw(lua_State *L)   { safe_call(L, "_draw");   }
+
+void cx8_script_set_error(const char *msg) { set_error(msg); }
 
 void cx8_script_shutdown(lua_State *L)
 {

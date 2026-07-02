@@ -1,6 +1,7 @@
 -- title: PIXEL-STRETCH PRO Demo
 -- author: VisualFX Co.
 -- desc: Visual effects showcase
+-- modules: pixstretch
 
 -- Load the PIXEL-STRETCH PRO module
 mod_load(MOD_PIXSTRETCH)

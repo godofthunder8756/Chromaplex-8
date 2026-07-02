@@ -22,10 +22,11 @@ void cx8_script_call_init(lua_State *L);
 void cx8_script_call_update(lua_State *L);
 void cx8_script_call_draw(lua_State *L);
 
-/* Check if the VM is in an error state; get the error message */
+/* Check if the VM is in an error state; get/set the error message */
 bool        cx8_script_has_error(void);
 const char *cx8_script_get_error(void);
 void        cx8_script_clear_error(void);
+void        cx8_script_set_error(const char *msg);
 
 /* Shutdown */
 void cx8_script_shutdown(lua_State *L);

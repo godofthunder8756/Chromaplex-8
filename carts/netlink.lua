@@ -1,6 +1,7 @@
 -- title: NETLINK-1 Demo
 -- author: CyberConnect
 -- desc: LAN multiplayer networking demo
+-- modules: netlink
 
 -- Load the NETLINK-1 module
 mod_load(MOD_NETLINK)

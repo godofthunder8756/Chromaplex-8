@@ -90,23 +90,31 @@ static void draw_error_screen(void)
     cx8_gpu_rectfill(0, 0, CX8_SCREEN_W - 1, 9, 8);
     cx8_gpu_print("RUNTIME ERROR", 4, 2, 7);
 
+    /* Cart name */
+    if (g_cart_loaded && g_cart.title[0]) {
+        cx8_gpu_print(g_cart.title, 4, 12, 6);
+    }
+
     /* Error message — word-wrap at screen width */
     const char *msg = cx8_script_get_error();
     if (!msg) msg = "unknown error";
 
-    int y = 16;
+    int y = 22;
     int x = 4;
     int max_w = CX8_SCREEN_W - 8;
     int char_w = CX8_GLYPH_W + 1;
     int chars_per_line = max_w / char_w;
 
-    while (*msg && y < CX8_SCREEN_H - 16) {
+    while (*msg && y < CX8_SCREEN_H - 20) {
         char line[64];
         int len = (int)strlen(msg);
         if (len > chars_per_line) len = chars_per_line;
 
-        /* Try to break at a space */
-        if ((int)strlen(msg) > chars_per_line) {
+        /* Try to break at a space or newline */
+        const char *nl = memchr(msg, '\n', (size_t)len);
+        if (nl) {
+            len = (int)(nl - msg);
+        } else if ((int)strlen(msg) > chars_per_line) {
             int brk = len;
             while (brk > 0 && msg[brk] != ' ') brk--;
             if (brk > 0) len = brk;
@@ -117,11 +125,12 @@ static void draw_error_screen(void)
         cx8_gpu_print(line, x, y, 7);
         y += CX8_GLYPH_H + 2;
         msg += len;
+        if (*msg == '\n') msg++;
         while (*msg == ' ') msg++;
     }
 
     /* Instructions */
-    cx8_gpu_print("PRESS ESC TO RETURN HOME", 4, CX8_SCREEN_H - 10, 5);
+    cx8_gpu_print("ESC: HOME   R: RELOAD", 4, CX8_SCREEN_H - 10, 5);
 }
 
 /* ─── SDL Initialization ──────────────────────────────────── */
@@ -256,12 +265,22 @@ static bool load_and_run_cart(const char *path)
     cx8_gpu_pal_reset();
     cx8_apu_stop_all();
 
+    /* Clear any prior errors */
+    cx8_script_clear_error();
+
     /* Load cart */
     if (!cx8_cart_load(path, &g_cart)) {
         fprintf(stderr, "[CX8] Failed to load cartridge: %s\n", path);
+        /* Set error for on-screen display */
+        char err_buf[256];
+        snprintf(err_buf, sizeof(err_buf), "Failed to load cartridge:\n%s", path);
+        cx8_script_set_error(err_buf);
         return false;
     }
     g_cart_loaded = true;
+
+    /* ─── Auto-scan and load required modules ──────────── */
+    cx8_modules_auto_scan(g_cart.source);
 
     /* Load sprite data into GPU */
     if (g_cart.sprite_data && g_cart.sprite_len > 0) {
@@ -285,18 +304,27 @@ static bool load_and_run_cart(const char *path)
     g_lua = cx8_script_init();
     if (!g_lua) {
         fprintf(stderr, "[CX8] Failed to initialise scripting engine.\n");
+        cx8_script_set_error("Failed to initialise Lua scripting engine.");
         return false;
     }
 
     if (!cx8_script_load(g_lua, g_cart.source,
                          g_cart.title[0] ? g_cart.title : g_cart.filename)) {
         fprintf(stderr, "[CX8] Failed to load cart script.\n");
+        /* Error already captured by cx8_script_load via set_error */
         cx8_script_shutdown(g_lua);
         g_lua = NULL;
         return false;
     }
 
     cx8_script_call_init(g_lua);
+
+    /* Check if _init() itself triggered an error */
+    if (cx8_script_has_error()) {
+        fprintf(stderr, "[CX8] Error in _init(): %s\n", cx8_script_get_error());
+        return false;
+    }
+
     printf("[CX8] Running cartridge: %s\n", path);
 
     /* Init persistent storage for this cart */
@@ -601,6 +629,9 @@ int main(int argc, char *argv[])
                 if (cart_path) {
                     if (load_and_run_cart(cart_path)) {
                         g_state = STATE_RUNNING;
+                    } else if (cx8_script_has_error()) {
+                        /* Show error screen for load failures */
+                        g_state = STATE_RUNNING;  /* error screen handled in RUNNING state */
                     } else {
                         /* Fall back to home screen on load failure */
                         cx8_home_init(g_carts_dir);
@@ -630,6 +661,10 @@ int main(int argc, char *argv[])
             case CX8_HOME_RUN: {
                 const char *path = cx8_home_selected_path();
                 if (path && load_and_run_cart(path)) {
+                    g_state = STATE_RUNNING;
+                    SDL_StopTextInput();
+                } else if (cx8_script_has_error()) {
+                    /* Show error screen for load/init failures */
                     g_state = STATE_RUNNING;
                     SDL_StopTextInput();
                 }
@@ -715,20 +750,36 @@ int main(int argc, char *argv[])
 
         /* ═══ RUNNING ════════════════════════════════════ */
         case STATE_RUNNING: {
-            /* Check for ESC → back to home */
+            /* Check for ESC → back to home (or R → reload on error) */
             for (int i = 0; i < frame_event_count; i++) {
-                if (frame_events[i].type == SDL_KEYDOWN &&
-                    frame_events[i].key.keysym.sym == SDLK_ESCAPE) {
-                    /* Stop the game and go home */
-                    printf("[CX8] Returning to home screen.\n");
-                    if (g_lua) { cx8_script_shutdown(g_lua); g_lua = NULL; }
-                    cx8_apu_stop_all();
-                    cx8_music_stop();
-                    cx8_persist_shutdown();
-                    cx8_script_clear_error();
-                    cx8_home_init(g_carts_dir);
-                    g_state = STATE_HOME;
-                    break;
+                if (frame_events[i].type == SDL_KEYDOWN) {
+                    SDL_Keycode key = frame_events[i].key.keysym.sym;
+
+                    if (key == SDLK_ESCAPE) {
+                        /* Stop the game and go home */
+                        printf("[CX8] Returning to home screen.\n");
+                        if (g_lua) { cx8_script_shutdown(g_lua); g_lua = NULL; }
+                        cx8_apu_stop_all();
+                        cx8_music_stop();
+                        cx8_persist_shutdown();
+                        cx8_script_clear_error();
+                        cx8_home_init(g_carts_dir);
+                        g_state = STATE_HOME;
+                        break;
+                    }
+
+                    /* R to reload cart on error screen */
+                    if (key == SDLK_r && cx8_script_has_error()) {
+                        printf("[CX8] Reloading cart...\n");
+                        const char *reload_path = g_cart_loaded ? g_cart.filename : cart_path;
+                        if (reload_path) {
+                            cx8_script_clear_error();
+                            if (!load_and_run_cart(reload_path)) {
+                                /* Still broken — error screen will show again */
+                            }
+                        }
+                        break;
+                    }
                 }
             }
             if (g_state != STATE_RUNNING) break;
