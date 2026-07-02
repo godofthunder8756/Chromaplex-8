@@ -125,15 +125,17 @@ static void scan_directory(const char *dir)
     while ((ent = readdir(d)) != NULL && s_count < CX8_HOME_MAX_CARTS) {
         char full_path[CX8_HOME_PATH_LEN];
         struct stat st;
+        int path_len;
 
-        snprintf(full_path, sizeof(full_path), "%s/%s", dir, ent->d_name);
+        path_len = snprintf(full_path, sizeof(full_path), "%s/%s", dir, ent->d_name);
+        if (path_len < 0 || path_len >= (int)sizeof(full_path)) continue;
         if (stat(full_path, &st) != 0 || S_ISDIR(st.st_mode)) continue;
         if (!ends_with(ent->d_name, ".lua") && !ends_with(ent->d_name, ".cx8")) continue;
 
         cx8_home_entry_t *e = &s_entries[s_count];
         memset(e, 0, sizeof(*e));
         snprintf(e->path, sizeof(e->path), "%s", full_path);
-        strncpy(e->name, ent->d_name, CX8_HOME_NAME_LEN - 1);
+        snprintf(e->name, CX8_HOME_NAME_LEN, "%s", ent->d_name);
         char *dot = strrchr(e->name, '.');
         if (dot) *dot = '\0';
         extract_title(e->path, e->name, e->author);
