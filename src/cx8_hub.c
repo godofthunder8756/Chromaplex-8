@@ -1,3 +1,8 @@
+/* Feature test macro must appear before any system headers. */
+#ifndef _WIN32
+#define _POSIX_C_SOURCE 200112L
+#endif
+
 /*
  * cx8_hub.c — Chromaplex 8 Community Cart Hub
  *
