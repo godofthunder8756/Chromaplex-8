@@ -30,7 +30,7 @@ jobs:
             msystem: MINGW32
             prefix: mingw-w64-i686
             sdl2_dir: i686-w64-mingw32
-            lua_pkg: mingw-w64-i686-lua54
+            lua_pkg: mingw-w64-i686-lua
 
     defaults:
       run:
