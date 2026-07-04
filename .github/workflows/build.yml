@@ -25,10 +25,12 @@ jobs:
             msystem: MINGW64
             prefix: mingw-w64-x86_64
             sdl2_dir: x86_64-w64-mingw32
+            lua_pkg: mingw-w64-x86_64-lua
           - arch: x86
             msystem: MINGW32
             prefix: mingw-w64-i686
             sdl2_dir: i686-w64-mingw32
+            lua_pkg: mingw-w64-i686-lua54
 
     defaults:
       run:
@@ -43,7 +45,7 @@ jobs:
           install: >-
             ${{ matrix.prefix }}-gcc
             ${{ matrix.prefix }}-SDL2
-            ${{ matrix.prefix }}-lua
+            ${{ matrix.lua_pkg }}
             make
 
       - name: Build
