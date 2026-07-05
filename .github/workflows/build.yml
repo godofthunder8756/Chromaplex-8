@@ -27,10 +27,10 @@ jobs:
             sdl2_dir: x86_64-w64-mingw32
             lua_pkg: mingw-w64-x86_64-lua
           - arch: x86
-            msystem: MINGW32
-            prefix: mingw-w64-i686
+            msystem: UCRT32
+            prefix: mingw-w64-ucrt-i686
             sdl2_dir: i686-w64-mingw32
-            lua_pkg: mingw-w64-i686-lua
+            lua_pkg: mingw-w64-ucrt-i686-lua
 
     defaults:
       run:
