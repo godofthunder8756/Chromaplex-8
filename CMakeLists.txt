@@ -17,19 +17,37 @@ endif()
 # ─── Dependencies ──────────────────────────────────────────────
 
 if(CX8_USE_BUNDLED)
-    # ── Bundled SDL2 (MinGW x86_64 from deps/) ─────────────────
-    if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-        set(SDL2_BUNDLED_DIR "${CMAKE_SOURCE_DIR}/deps/SDL2-2.30.11/x86_64-w64-mingw32")
+    if(MSVC)
+        # ── Bundled SDL2 (MSVC VC libs from deps/) ─────────────────
+        set(SDL2_BUNDLED_BASE "${CMAKE_SOURCE_DIR}/deps/SDL2-2.30.11")
+        set(SDL2_INCLUDE_DIRS "${SDL2_BUNDLED_BASE}/include")
+        if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+            set(_SDL2_LIB_DIR "${SDL2_BUNDLED_BASE}/lib/x64")
+        else()
+            set(_SDL2_LIB_DIR "${SDL2_BUNDLED_BASE}/lib/x86")
+        endif()
+        set(SDL2_LIBRARIES
+            "${_SDL2_LIB_DIR}/SDL2main.lib"
+            "${_SDL2_LIB_DIR}/SDL2.lib"
+        )
+        set(SDL2_DLL "${_SDL2_LIB_DIR}/SDL2.dll")
+        message(STATUS "[CX8] Using BUNDLED SDL2 (MSVC) from: ${SDL2_BUNDLED_BASE}")
     else()
-        set(SDL2_BUNDLED_DIR "${CMAKE_SOURCE_DIR}/deps/SDL2-2.30.11/i686-w64-mingw32")
-    endif()
+        # ── Bundled SDL2 (MinGW x86_64 from deps/) ─────────────────
+        if(CMAKE_SIZEOF_VOID_P EQUAL 8)
+            set(SDL2_BUNDLED_DIR "${CMAKE_SOURCE_DIR}/deps/SDL2-2.30.11/x86_64-w64-mingw32")
+        else()
+            set(SDL2_BUNDLED_DIR "${CMAKE_SOURCE_DIR}/deps/SDL2-2.30.11/i686-w64-mingw32")
+        endif()
 
-    set(SDL2_INCLUDE_DIRS "${SDL2_BUNDLED_DIR}/include/SDL2")
-    set(SDL2_LIBRARIES
-        "${SDL2_BUNDLED_DIR}/lib/libSDL2main.a"
-        "${SDL2_BUNDLED_DIR}/lib/libSDL2.dll.a"
-    )
-    set(SDL2_DLL "${SDL2_BUNDLED_DIR}/bin/SDL2.dll")
+        set(SDL2_INCLUDE_DIRS "${SDL2_BUNDLED_DIR}/include/SDL2")
+        set(SDL2_LIBRARIES
+            "${SDL2_BUNDLED_DIR}/lib/libSDL2main.a"
+            "${SDL2_BUNDLED_DIR}/lib/libSDL2.dll.a"
+        )
+        set(SDL2_DLL "${SDL2_BUNDLED_DIR}/bin/SDL2.dll")
+        message(STATUS "[CX8] Using BUNDLED SDL2 (MinGW) from: ${SDL2_BUNDLED_DIR}")
+    endif()
 
     # ── Bundled Lua 5.4 (compiled from source in deps/) ────────
     set(LUA_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/deps/lua-5.4.7/src")
@@ -54,7 +72,6 @@ if(CX8_USE_BUNDLED)
     target_compile_definitions(lua_bundled PRIVATE LUA_COMPAT_5_3)
     set(LUA_LIBRARIES lua_bundled)
 
-    message(STATUS "[CX8] Using BUNDLED SDL2 from: ${SDL2_BUNDLED_DIR}")
     message(STATUS "[CX8] Using BUNDLED Lua from: ${LUA_SRC_DIR}")
 else()
     # ── System SDL2 ─────────────────────────────────────────────
@@ -111,7 +128,7 @@ elseif(APPLE)
         "-framework CoreVideo" "-framework AudioToolbox" "-framework Carbon")
 elseif(WIN32)
     target_link_libraries(chromaplex8 PRIVATE ws2_32 winmm imm32 setupapi version)
-    if(CX8_USE_BUNDLED)
+    if(CX8_USE_BUNDLED AND NOT MSVC)
         target_link_libraries(chromaplex8 PRIVATE mingw32)
     endif()
 endif()
